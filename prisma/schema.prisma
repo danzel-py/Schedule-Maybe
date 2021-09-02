@@ -35,3 +35,8 @@ model User {
   groupId        Int?
   @@map(name: "users")
 }
+
+// npx prisma studio
+// npx prisma generate
+// npx prisma db push
+
