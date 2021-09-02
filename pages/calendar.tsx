@@ -1,10 +1,11 @@
 import Layout from '../components/Layout'
 
-export default function IndexPage() {
+export default function Calendar() {
   return (
     <Layout>
       <h1>
-        landing
+        calendar:
+        monthly, weekly, daily
       </h1>
     </Layout>
   )

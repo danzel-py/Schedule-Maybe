@@ -1,10 +1,10 @@
 import Layout from '../components/Layout'
 
-export default function IndexPage() {
+export default function Login() {
   return (
     <Layout>
       <h1>
-        landing
+        Login
       </h1>
     </Layout>
   )

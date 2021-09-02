@@ -2,7 +2,7 @@
 
 TODO:
 - ~~Setup~~
-- Basic routes
+- ~~Basic routes~~
 - ~~Signup~~ lazy, try next-auth
 - Login & Auth
 - Schedule

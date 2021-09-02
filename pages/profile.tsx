@@ -1,10 +1,10 @@
 import Layout from '../components/Layout'
 
-export default function IndexPage() {
+export default function Profile() {
   return (
     <Layout>
       <h1>
-        landing
+        profile: edit ?
       </h1>
     </Layout>
   )

@@ -1,10 +1,10 @@
 import Layout from '../components/Layout'
 
-export default function IndexPage() {
+export default function Dashboard() {
   return (
     <Layout>
       <h1>
-        landing
+        dashboard
       </h1>
     </Layout>
   )
