@@ -18,19 +18,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
         include:{
           author: true,
-          schedules: {
-            where: { // get from first month so we can display month's schedule
-              createdAt: {
-                gte: getFirstDayMonth(),
-                lt:  getDaysLater(40)
-              },
-            }
-          }
+          schedules: true,
+          users: true
         }
       })
       if(!group){
         throw Error("group not found")
       }
+
+      let tmp = group.schedules.filter(schedule=>
+        schedule.startTime >= getDaysLater(-40) && schedule.startTime < getDaysLater(40) 
+      )
+      tmp.sort((a,b)=>{
+        if(a.startTime > b.startTime){
+          return 1
+        }
+        if(a.startTime < b.startTime){
+          return -1
+        }
+        return 0
+      })
+      group.schedules = tmp
+
+
+      const checkMember = (e)=> e.email == session.user.email
+
       res.send({
         groupData: {
           name: group.name,
@@ -41,6 +53,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             username: group.author.username
           },
           admin: session.user.email == group.author.email,
+          member: group.users.some(checkMember), 
           schedules: group.schedules
         }
       })
@@ -56,10 +69,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   
   /*
   
-  * on success send data
-  res.send({
-    groupData: groupName
-  })
+  * on success send groupData
 
   * on fail deliver groupNotFound: true
 */

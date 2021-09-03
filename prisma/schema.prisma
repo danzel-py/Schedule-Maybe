@@ -88,6 +88,7 @@ model Schedule {
   type        ScheduleType @default(SPECIFIC)
   name        String
   description String?
+  link        String?
   startTime   DateTime
   endTime     DateTime
   createdAt   DateTime     @default(now()) @map(name: "created_at")
