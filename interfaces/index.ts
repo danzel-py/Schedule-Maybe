@@ -9,7 +9,7 @@ export type IUser = {
   name: string
 }
 
-export type IFormNewGroup = {
+export type IFormCreateGroup = {
   name: string
   about: string
   enterKey: string
