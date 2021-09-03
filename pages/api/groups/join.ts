@@ -1,10 +1,73 @@
 import { getSession } from "next-auth/client"
-import type {NextApiResponse, NextApiRequest} from 'next'
+import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../lib/prisma'
 
-export default async (req:NextApiRequest, res:NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
-  /*
+  const { name, enterKey } = req.body
+
+  //* JOIN-GROUP LOGIC
+
+  function invalidData(m) {
+    this.message = m
+    this.name = 'invalidData'
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email
+      },
+    })
+    const group = await prisma.group.findUnique({
+      where: {
+        name: name
+      }
+    })
+    if (user && group) {
+      if (user.name != session.user.name) throw Error("invalid user, junk token")
+      if (group.authorId == user.id) throw Error("you're already an author")
+      if (group.enterKey != enterKey) throw Error("invalid enter key")
+      const updateGroup = await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          groupsEnrolled: {
+            connect: {
+              id: group.id,
+            },
+          },
+        },
+      })
+        .then((data) => {
+          console.log(data)
+          res.send({
+            success: true,
+            groupName: name
+          })
+          res.status(200).end()
+        })
+    }
+    else {
+      throw invalidData('incorrect user/group')
+    }
+
+
+
+  } catch (err) {
+    res.send({
+      message: `An error occurred: ${err.message}`
+    })
+    console.log(err)
+
+    res.status(400).end()
+
+  }
+}
+
+
+/*
   console.log(session)
   {
     user: {
@@ -17,8 +80,3 @@ export default async (req:NextApiRequest, res:NextApiResponse) => {
     id: 1111111
   }
   */
-
-
- //! JOIN GROUP LOGIC
-  res.status(200).end()
-}

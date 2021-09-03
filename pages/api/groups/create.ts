@@ -1,10 +1,64 @@
 import { getSession } from "next-auth/client"
-import type {NextApiResponse, NextApiRequest} from 'next'
+import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../lib/prisma'
+import { error } from "console"
 
-export default async (req:NextApiRequest, res:NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
-  /*
+  const {name, about, enterKey} = req.body
+
+  //* CREATE-GROUP LOGIC
+
+  
+  try{
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email
+      },
+    })
+    if(user){
+      if(user.name != session.user.name) throw Error("invalid user, junk token")
+      const newGroup = await prisma.group.create({
+        data:{
+          name,
+          about,
+          enterKey,
+          authorId: user.id
+        }
+      })
+      .then((data)=>{
+        console.log(data)
+        res.send({
+          success: true,
+          groupName: name
+        })
+        res.status(200).end()
+      })
+    }
+
+
+
+  }catch(err){
+    if(err.code == 'P2002'){
+      console.log("ai")
+      res.send({
+        message: "Group name taken! Please try other name"
+      })
+    }
+    else{
+      res.send({
+        message: "An error occurred"
+      })
+      console.log(err)
+    }
+    res.status(400).end()
+
+  }
+}
+
+
+
+/*
   console.log(session)
   {
     user: {
@@ -17,8 +71,3 @@ export default async (req:NextApiRequest, res:NextApiResponse) => {
     id: 1111111
   }
   */
-
-
- //! CREATE GROUP LOGIC
-  res.status(200).end()
-}
