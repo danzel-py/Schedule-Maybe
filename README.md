@@ -5,10 +5,13 @@ TODO:
 - ~~Basic routes~~
 - ~~Signup~~ ~~lazy, try next-auth~~
 - ~~Login & Auth~~
+- Groups:
+  - ~~model~~, crud
 - Schedule:
-  - model, crud
-  - hmmm
+  - ~~model~~, crud
 - build pages:
+  - groups
+    - crud schedule here
   - calendar
     - monthly
     - weekly

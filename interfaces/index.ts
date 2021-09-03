@@ -4,7 +4,19 @@
 //
 // import { User } from 'path/to/interfaces';
 
-export type User = {
+export type IUser = {
   id: number
   name: string
+}
+
+export type IFormNewGroup = {
+  name: string
+  about: string
+  enterKey: string
+  public: boolean
+}
+
+export type IFormJoinGroup = {
+  name: string
+  enterKey: string
 }

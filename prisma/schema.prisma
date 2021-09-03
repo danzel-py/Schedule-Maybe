@@ -46,37 +46,67 @@ model VerificationRequest {
 }
 
 model Group {
-  id     Int     @id @default(autoincrement())
-  name   String
-  about  String?
-  public Boolean @default(true)
+  id       Int     @id @default(autoincrement())
+  name     String
+  enterKey String
+  about    String?
+  public   Boolean @default(true)
 
 
   // relational
-  author   User?  @relation(fields: [authorId], references: [id], name: "group-author")
-  authorId Int?
-  users    User[] @relation(name: "group-enroll")
+  author    User?      @relation(fields: [authorId], references: [id], name: "group-author")
+  authorId  Int?
+  users     User[]     @relation(name: "group-enroll")
+  schedules Schedule[]
   @@map(name: "groups")
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  username      String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email         String?   @unique
-  image         String?
-  emailVerified DateTime?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  id             Int       @id @default(autoincrement())
+  name           String?
+  username       String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email          String?   @unique
+  image          String?
+  emailVerified  DateTime?
+  createdAt      DateTime  @default(now()) @map(name: "created_at")
+  updatedAt      DateTime  @updatedAt @map(name: "updated_at")
+  failedAttempts Int       @default(0)
 
 
   // relational
-  accounts       Account[]
-  sessions       Session[]
-  groupsAuthored Group?    @relation(name: "group-author")
-  groupsEnrolled Group?    @relation(name: "group-enroll", fields: [groupId], references: [id])
-  groupId        Int?
+  accounts          Account[]
+  sessions          Session[]
+  groupsAuthored    Group[]    @relation(name: "group-author")
+  groupsEnrolled    Group[]    @relation(name: "group-enroll")
+  schedulesAuthored Schedule[]
+  schedulesEnrolled Schedule[] @relation(name: "schedule-enroll")
   @@map(name: "users")
+}
+
+model Schedule {
+  id          Int          @id @default(autoincrement())
+  type        ScheduleType @default(SPECIFIC)
+  name        String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime     @default(now()) @map(name: "created_at")
+  updatedAt   DateTime     @updatedAt @map(name: "updated_at")
+
+  // relational
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId Int
+  group    Group  @relation(fields: [groupId], references: [id])
+  groupId  Int
+  users    User[] @relation("schedule-enroll")
+  @@map(name: "schedules")
+}
+
+enum ScheduleType {
+  WEEKLY
+  MONTHLY
+  YEARLY
+  SPECIFIC
 }
 
 // npx prisma studio
