@@ -1,7 +1,6 @@
 import { getSession } from "next-auth/client"
 import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../lib/prisma'
-import { error } from "console"
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
@@ -17,7 +16,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     })
     if(user){
-      if(user.name != session.user.name) throw Error("invalid user, junk token")
       const newGroup = await prisma.group.create({
         data:{
           name,

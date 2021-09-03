@@ -11,6 +11,8 @@ TODO:
   - ~~model~~, crud
 - build pages:
   - groups
+    - enrolled groups + some public groups
+  - each group
     - crud schedule here
   - calendar
     - monthly

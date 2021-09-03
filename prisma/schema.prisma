@@ -47,15 +47,15 @@ model VerificationRequest {
 
 model Group {
   id       Int     @id @default(autoincrement())
-  name     String
+  name     String  @unique
   enterKey String
   about    String?
   public   Boolean @default(true)
 
 
   // relational
-  author    User?      @relation(fields: [authorId], references: [id], name: "group-author")
-  authorId  Int?
+  author    User      @relation(fields: [authorId], references: [id], name: "group-author")
+  authorId  Int
   users     User[]     @relation(name: "group-enroll")
   schedules Schedule[]
   @@map(name: "groups")

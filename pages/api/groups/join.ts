@@ -25,7 +25,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     })
     if (user && group) {
-      if (user.name != session.user.name) throw Error("invalid user, junk token")
       if (group.authorId == user.id) throw Error("you're already an author")
       if (group.enterKey != enterKey) throw Error("invalid enter key")
       const updateGroup = await prisma.user.update({
