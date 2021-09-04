@@ -21,7 +21,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           name: groupName
         },
         include: {
-          users: true
+          users: true,
+          author: true
         }
       })
       
@@ -60,13 +61,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           throw Error("failed creating schedule")
         }
         if(includeEveryone && group.users){
-          const groupMembers = group.users.map((user) => {
-            if(user.email != session.user.email){
-              return {
-                id: user.id
-              }
+          const filteredGroupMembers = group.users.filter((user)=>{
+            if(user.email == session.user.email){
+              return false
             }
+            return true
           })
+          const groupMembers = filteredGroupMembers.map((user)=>{
+            return {id: user.id}
+          })
+          
+          if(group.author.email != session.user.email){
+            groupMembers.push({
+              id: group.author.id
+            })
+          }
+
           const n = await prisma.schedule.update({
             where:{
               id: newSchedule.id
