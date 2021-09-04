@@ -6,9 +6,9 @@ TODO:
 - ~~Signup~~ ~~lazy, try next-auth~~
 - ~~Login & Auth~~
 - Groups:
-  - ~~model~~, crud
+  - ~~model~~, ~~cr~~u~~d~~
 - Schedule:
-  - ~~model~~, crud
+  - ~~model~~, ~~cr~~ud
 - build pages:
   - groups
     - enrolled groups + some public groups

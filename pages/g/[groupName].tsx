@@ -1,14 +1,18 @@
 import Link from 'next/link'
-import { useRouter } from 'next/dist/client/router'
+import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import Layout from '../../components/Layout'
 import useSWR from 'swr'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ScheduleForm from '../../components/Forms/ScheduleForm'
+import { useSession } from "next-auth/client"
+
+
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export default function GroupPage() {
+  const [session, loading] = useSession()
   const router = useRouter()
   const { groupName } = router.query
   const [message, setMessage] = useState<string>('')
@@ -40,19 +44,23 @@ export default function GroupPage() {
     */
   }
 
-  
+  useEffect(()=>{
+    if(!session && !loading){
+      router.push('/')
+    }
+  },[session])
 
   if (error) return <div>{error}</div>
   if (!data) return <div>loading...</div>
   if (message) return (
-    <div>
+    <Layout>
       {success && <>
         Deleted, </>}
       {message}
-    </div>
+    </Layout>
   )
   if (data.groupNotFound) return (
-    <div>
+    <Layout>
       group not found<br />
       <Link href='/g/create'>
         <a>
@@ -65,7 +73,7 @@ export default function GroupPage() {
           Join existing
       </a>
       </Link>
-    </div>
+    </Layout>
   )
 
 
@@ -108,7 +116,7 @@ export default function GroupPage() {
           <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
             new schedule</button>
 
-          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} />
+          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} />
         </div>
       }
 

@@ -109,7 +109,8 @@ enum ScheduleType {
   STUDYGROUP
   MEETING
   EVENT
-  OTHER  
+  OTHER
+  SPECIFIC  
 }
 
 // npx prisma studio
