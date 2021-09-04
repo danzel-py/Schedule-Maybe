@@ -85,7 +85,7 @@ model User {
 
 model Schedule {
   id          Int          @id @default(autoincrement())
-  type        ScheduleType @default(SPECIFIC)
+  type        ScheduleType @default(OTHER)
   name        String
   description String?
   link        String?
@@ -104,10 +104,12 @@ model Schedule {
 }
 
 enum ScheduleType {
-  WEEKLY
-  MONTHLY
-  YEARLY
-  SPECIFIC
+  LECTURE
+  WEBINAR
+  STUDYGROUP
+  MEETING
+  EVENT
+  OTHER  
 }
 
 // npx prisma studio

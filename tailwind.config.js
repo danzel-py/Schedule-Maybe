@@ -8,4 +8,9 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  theme: {
+    maxHeight: {
+     '90vh': '90vh',
+    }
+  }
 }
