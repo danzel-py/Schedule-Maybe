@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import { useEffect, useState } from 'react'
 import ScheduleForm from '../../components/Forms/ScheduleForm'
 import { useSession } from "next-auth/client"
+import ScheduleList from '../../components/Groups/ScheduleList'
 
 
 
@@ -95,24 +96,10 @@ export default function GroupPage() {
 
       {(data.groupData.member || data.groupData.admin) &&
         <div>
-          Eligible to get schedules <br></br>
+          Member/admin only <br></br>
+          <ScheduleList schedules={data.groupData.schedules}/>
 
-          <ul>
-
-            {data.groupData.schedules.map((schedule) => {
-              return (
-                <li>
-                  {schedule.name}
-                  {" | "}
-                  {schedule.description}
-                  {" | "}
-                  {schedule.startTime}
-                  {" | "}
-                  {schedule.endTime}
-                </li>
-              )
-            })}
-          </ul>
+          
           <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
             new schedule</button>
 

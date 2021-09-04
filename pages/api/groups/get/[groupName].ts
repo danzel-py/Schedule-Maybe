@@ -11,6 +11,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 // 2021-09-03T03:04:04.727Z
 
   try{
+    if(!session){
+      throw Error("who r u")
+    }
     if(typeof groupName == 'string'){
       const group = await prisma.group.findUnique({
         where:{
@@ -63,6 +66,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }catch(err){
     res.send({
+      message: err.message,
       groupNotFound: true
     })
   }

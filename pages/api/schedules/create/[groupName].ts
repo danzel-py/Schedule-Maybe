@@ -99,9 +99,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   /*
   
-  * on success send groupData
-
-  * on fail deliver groupNotFound: true
+  * on success send success
 */
 
 

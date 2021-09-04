@@ -35,7 +35,7 @@ export default function ScheduleForm(props) {
       ),
     link: Yup.string()
       .matches(
-        /(((https?:\/\/)|(www\.)|(.+\.))[^\s]+)/,
+        /^$|(((https?:\/\/)|(www\.)|(.+\.))[^\s]+)/,
         'Bad url value'
       )
   })
