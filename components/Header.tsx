@@ -18,6 +18,11 @@ export default function Navbar() {
             <a>Calendar</a>
           </Link>{' '}
           |{' '}
+          <Link href="/groups">
+            <a>My Groups</a>
+          </Link>
+          {' '}
+              |{' '}
           <Link href="/profile">
             <a>Profile</a>
           </Link>{' '}
