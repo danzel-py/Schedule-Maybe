@@ -16,22 +16,28 @@ export default function GroupPage() {
   const [session, loading] = useSession()
   const router = useRouter()
   const { groupName } = router.query
+  const { isValidating, data, error, mutate } = useSWR(`/api/groups/get/${groupName}`, fetcher)
+
+
   const [message, setMessage] = useState<string>('')
   const [success, setSuccess] = useState<boolean>(false)
   const [showForm, setShowForm] = useState<boolean>(false)
-  const [formPlaceholders, setFormPlaceholders] = useState <object>({edit: false})
+  const [formPlaceholders, setFormPlaceholders] = useState<object>({ edit: false })
 
-  const { data, error } = useSWR(`/api/groups/get/${groupName}`, fetcher)
   const { register, formState: { errors }, handleSubmit } = useForm<FormData>()
 
-  const handleSetShowForm = (edit:boolean = false, placeholders?:Object) => {
-    if(edit){
+  const handleSetShowForm = (edit: boolean = false, placeholders?: Object) => {
+    if (edit) {
       setShowForm(true)
       setFormPlaceholders(placeholders)
-    }else{
-      setFormPlaceholders({edit: false})
+    } else {
+      setFormPlaceholders({ edit: false })
       setShowForm(!showForm)
     }
+  }
+
+  const handleRefreshData = () =>{
+    mutate()
   }
 
   const handlePurge = async () => {
@@ -52,11 +58,11 @@ export default function GroupPage() {
     */
   }
 
-  useEffect(()=>{
-    if(!session && !loading){
+  useEffect(() => {
+    if (!session && !loading) {
       router.push('/')
     }
-  },[session])
+  }, [session])
 
   if (error) return <div>{error}</div>
   if (!data) return <div>loading...</div>
@@ -91,7 +97,10 @@ export default function GroupPage() {
       <h1>
         Welcome to {data.groupData?.name}
       </h1>
-
+      <button onClick={() => mutate()}>refresh</button>
+      {isValidating && <div>
+        Data is being refreshed
+      </div>}
       {data.groupData?.admin && <>Youre an admin
         <div>
           <button className="h-10 px-5 m-2 text-red-100 transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-red-800" onClick={handlePurge}>Purge group</button>
@@ -104,13 +113,13 @@ export default function GroupPage() {
       {(data.groupData.member || data.groupData.admin) &&
         <div>
           Member/admin only <br></br>
-          <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} setShowForm={handleSetShowForm}/>
+          <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} setShowForm={handleSetShowForm} />
 
-          
+
           <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
             new schedule</button>
 
-          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders}/>
+          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData}/>
         </div>
       }
 

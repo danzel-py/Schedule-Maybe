@@ -11,7 +11,7 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default function Profile({ session }) {
+export default function GIndex() {
   useEffect(() => {
   }, [])
 

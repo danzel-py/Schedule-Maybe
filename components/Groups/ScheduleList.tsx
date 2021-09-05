@@ -1,12 +1,16 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { getDateFromObject, getTimeFromObject } from "../../helpers/datetime"
 
 
 export default function ScheduleList(props) {
-  const [showFormEdit, setShowFormEdit] = useState<boolean>(false)
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
   const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
+  const [propsData, setPropsData] = useState(props)
+
+  useEffect(()=>{
+    setPropsData(props)
+  },[props])
 
   const handleDeleteSchedule = async (id) => {
     setHandlingRequest(true)
@@ -43,9 +47,12 @@ export default function ScheduleList(props) {
       {message && <>{message}</>}
       {handlingRequest && <>Loading...</>}
       {requestSuccess && <>delete OK</>}
+
+
       <ul>
 
-        {props.schedules.map((schedule) => {
+
+        {propsData.schedules.map((schedule) => {
           return (
             <li key={schedule.id}>
               {schedule.name}
@@ -55,13 +62,13 @@ export default function ScheduleList(props) {
               {schedule.startTime}
               {" | "}
               {schedule.endTime}
-              {props.session.user.email == schedule.author.email &&
+              {propsData.session.user.email == schedule.author.email &&
               <div>
                 <button onClick={() => handleDeleteSchedule(schedule.id)}>
                   DELete
               </button>
                   {" | "}
-              <button onClick={() => props.setShowForm(true,{
+              <button onClick={() => propsData.setShowForm(true,{
                 name: schedule.name,
                 description: schedule.description,
                 startTime: getTimeFromObject(schedule.startTime),

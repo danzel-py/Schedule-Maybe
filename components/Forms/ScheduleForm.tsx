@@ -10,8 +10,9 @@ export default function ScheduleForm(props) {
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
   const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
   const [todayString, setTodayString] = useState<string>('')
-  const edit = props.placeholders.edit
-  const placeholders = props.placeholders
+  const [propsData, setPropsData] = useState(props)
+  const edit = propsData.placeholders.edit
+  const placeholders = propsData.placeholders
 
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -48,6 +49,10 @@ export default function ScheduleForm(props) {
     resolver: yupResolver(validationSchema)
   })
 
+
+  useEffect(()=>{
+    setPropsData(props)
+  },[props])
   
   useEffect(()=>{
     // :) react-hook-form moment
@@ -60,7 +65,9 @@ export default function ScheduleForm(props) {
       link: placeholders.link
   
     }
-    reset(formDefaultValues)
+    if(placeholders){
+      reset(formDefaultValues)
+    }
 
   },[reset,placeholders])
 
@@ -82,10 +89,11 @@ export default function ScheduleForm(props) {
   }, [])
 
   useEffect(() => {
-    if (!props.showForm) {
+    if (!propsData.showForm) {
       reset()
     }
-  }, [props.showForm])
+  }, [propsData.showForm])
+
 
 
 
@@ -95,8 +103,21 @@ export default function ScheduleForm(props) {
     if (formData.startTime > formData.endTime) {
       return setMessage("Invalid end time")
     }
+    if(edit){
+      if(
+          formData.name == placeholders.name
+      &&  formData.description == placeholders.description
+      &&  formData.date == placeholders.date
+      &&  formData.startTime == placeholders.startTime
+      &&  formData.endTime == placeholders.endTime
+      &&  formData.link == placeholders.link
+      ){
+        console.log("sama smua")
+        return setMessage("Nothing to update")
+      }
+    }
     setHandlingRequest(true)
-    const res = await fetch(`/api/schedules/${edit ? "edit" : "create"}/${props.groupName}`, {
+    const res = await fetch(`/api/schedules/${edit ? "edit" : "create"}/${propsData.groupName}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -129,21 +150,23 @@ export default function ScheduleForm(props) {
       // reset fields
       reset()
       setTimeout(() => {
+        props.setShowForm()
         setRequestSuccess(false)
-      }, 3000)
+        props.getRefresh()
+      }, 1000)
     }
 
   }
 
   const setShowFormLocal = () => {
-    if (props.showForm) {
-      props.setShowForm()
+    if (propsData.showForm) {
+      propsData.setShowForm()
     }
   }
 
 
   return (
-    <div className={`absolute h-screen inset-0 ${props.showForm ? "overflow-hidden" : "hidden"}`}>
+    <div className={`absolute h-screen inset-0 ${propsData.showForm ? "overflow-hidden" : "hidden"}`}>
       <div className=" flex justify-center h-screen items-center bg-blue-200 bg-opacity-70  antialiased">
         <div className="flex flex-col w-11/12 sm:w-5/6 lg:w-1/2 max-w-md mx-auto rounded-lg border border-gray-300 shadow-xl">
           <ClickAwayListener onClickAway={setShowFormLocal}>
@@ -283,7 +306,7 @@ export default function ScheduleForm(props) {
               <div
                 className="flex flex-row items-center justify-between p-5 bg-white border-t border-gray-200 rounded-bl-lg rounded-br-lg"
               >
-                <button onClick={() => props.setShowForm()} className="font-semibold text-gray-600">Cancel</button>
+                <button onClick={() => propsData.setShowForm()} className="font-semibold text-gray-600">Cancel</button>
 
                 {(message && !requestSuccess && !handlingRequest) &&
                   <div className="flex justify-between text-red-50 shadow-inner rounded px-2 bg-red-600">

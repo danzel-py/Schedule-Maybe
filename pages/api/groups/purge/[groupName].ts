@@ -1,7 +1,6 @@
 import { getSession } from "next-auth/client"
 import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../../lib/prisma'
-import { getDaysLater, getFirstDayMonth } from "../../../../helpers/datetime"
 
 // ! PURGE GROUP
 
