@@ -16,9 +16,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       throw("who r u")
     }
     if (typeof groupName == 'string') {
-      const group = await prisma.group.findUnique({
+      const group = await prisma.group.update({
         where: {
           name: groupName
+        },
+        data:{
+          updatedAt: new Date()
         },
         include: {
           users: true,
