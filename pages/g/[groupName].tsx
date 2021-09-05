@@ -19,12 +19,19 @@ export default function GroupPage() {
   const [message, setMessage] = useState<string>('')
   const [success, setSuccess] = useState<boolean>(false)
   const [showForm, setShowForm] = useState<boolean>(false)
+  const [formPlaceholders, setFormPlaceholders] = useState <object>({edit: false})
 
   const { data, error } = useSWR(`/api/groups/get/${groupName}`, fetcher)
   const { register, formState: { errors }, handleSubmit } = useForm<FormData>()
 
-  const handleSetShowForm = () => {
-    setShowForm(!showForm)
+  const handleSetShowForm = (edit:boolean = false, placeholders?:Object) => {
+    if(edit){
+      setShowForm(true)
+      setFormPlaceholders(placeholders)
+    }else{
+      setFormPlaceholders({edit: false})
+      setShowForm(!showForm)
+    }
   }
 
   const handlePurge = async () => {
@@ -56,7 +63,7 @@ export default function GroupPage() {
   if (message) return (
     <Layout>
       {success && <>
-        Deleted, </>}
+        Group Deleted, </>}
       {message}
     </Layout>
   )
@@ -97,13 +104,13 @@ export default function GroupPage() {
       {(data.groupData.member || data.groupData.admin) &&
         <div>
           Member/admin only <br></br>
-          <ScheduleList schedules={data.groupData.schedules}/>
+          <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} setShowForm={handleSetShowForm}/>
 
           
           <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
             new schedule</button>
 
-          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} />
+          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders}/>
         </div>
       }
 

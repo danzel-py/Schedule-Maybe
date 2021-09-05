@@ -8,8 +8,10 @@ import * as Yup from 'yup'
 export default function ScheduleForm(props) {
   const [message, setMessage] = useState<string>('')
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
-  const [requestSuccess, setRequestSuccess ] = useState<boolean>(false)
+  const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
   const [todayString, setTodayString] = useState<string>('')
+  const edit = props.placeholders.edit
+  const placeholders = props.placeholders
 
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -24,13 +26,13 @@ export default function ScheduleForm(props) {
     startTime: Yup.string()
       .required('Must not empty')
       .matches(
-        /^([0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
+        /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
         "Time must be in HH:MM format"
       ),
     endTime: Yup.string()
       .required('Must not empty')
       .matches(
-        /^([0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
+        /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
         "Time must be in HH:MM format"
       ),
     link: Yup.string()
@@ -38,11 +40,29 @@ export default function ScheduleForm(props) {
         /^$|(((https?:\/\/)|(www\.)|(.+\.))[^\s]+)/,
         'Bad url value'
       )
+      .nullable()
   })
 
+  
   const { register, formState: { errors }, handleSubmit, reset } = useForm<IFormCreateSchedule>({
     resolver: yupResolver(validationSchema)
   })
+
+  
+  useEffect(()=>{
+    // :) react-hook-form moment
+    let formDefaultValues = {
+      name: placeholders.name,
+      date: placeholders.date,
+      startTime: placeholders.startTime,
+      endTime: placeholders.endTime,
+      description: placeholders.description,
+      link: placeholders.link
+  
+    }
+    reset(formDefaultValues)
+
+  },[reset,placeholders])
 
   useEffect(() => {
     var today = new Date();
@@ -61,13 +81,22 @@ export default function ScheduleForm(props) {
     setTodayString(yyyy + '-' + mmonth + '-' + dday)
   }, [])
 
+  useEffect(() => {
+    if (!props.showForm) {
+      reset()
+    }
+  }, [props.showForm])
+
+
+
   const handleNewSchedule = async (formData: IFormCreateSchedule) => {
     console.log(formData)
+    setMessage('')
     if (formData.startTime > formData.endTime) {
       return setMessage("Invalid end time")
     }
     setHandlingRequest(true)
-    const res = await fetch(`/api/schedules/create/${props.groupName}`, {
+    const res = await fetch(`/api/schedules/${edit ? "edit" : "create"}/${props.groupName}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -77,28 +106,32 @@ export default function ScheduleForm(props) {
         date: formData.date,
         startTime: formData.startTime,
         endTime: formData.endTime,
-        type: formData.type,
         description: formData.description,
         link: formData.link,
-        includeEveryone: formData.includeEveryone,
+        ...(!edit && { includeEveryone: formData.includeEveryone }),
+        ...(!edit && { type: formData.type }),
+        ...(edit && { id: placeholders.id })
       })
     })
       .then(r => r.json())
       .catch((err) => {
         console.error(err)
       })
-      .finally(()=>{
+      .finally(() => {
         setHandlingRequest(false)
       })
-      if (res?.message) {
-        setMessage(res.message)
-      }
-      if (res?.success) {
-        setRequestSuccess(true)
-        setMessage('')
-        // reset fields
-        reset()
-      }
+    if (res?.message) {
+      setMessage(res.message)
+    }
+    if (res?.success) {
+      setRequestSuccess(true)
+      setMessage('')
+      // reset fields
+      reset()
+      setTimeout(() => {
+        setRequestSuccess(false)
+      }, 3000)
+    }
 
   }
 
@@ -128,6 +161,8 @@ export default function ScheduleForm(props) {
                       name="event"
                       type="text"
                       {...register('name')}
+                      defaultValue={placeholders.name ? placeholders.name : ""}
+
 
                       className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${errors.name ? 'border-red-500  ' : ''} `}
                       placeholder="webinar asdf1234"
@@ -143,6 +178,8 @@ export default function ScheduleForm(props) {
                       placeholder="yyyy-mm-dd (pls update safari lol)"
                       type="date"
                       max="2026-05-01" min={todayString}
+                      defaultValue={placeholders.date ? placeholders.date : ""}
+
                       className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${errors.date ? 'border-red-500  ' : ''} `}
                     />
                     <p className="text-red-500 text-xs italic">{errors.date?.message}</p>
@@ -156,10 +193,13 @@ export default function ScheduleForm(props) {
                         <input
                           {...register('startTime')}
                           placeholder="HH:MM"
+                          defaultValue={placeholders.startTime ? placeholders.startTime : ""}
+
 
                           type="time"
                           className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${errors.startTime ? 'border-red-500  ' : ''} `}
                         />
+                        <p className="text-red-500 text-xs italic">{errors.startTime?.message}</p>
 
                       </div>
 
@@ -169,6 +209,7 @@ export default function ScheduleForm(props) {
                         <input
                           {...register('endTime')}
                           placeholder="HH:MM"
+                          defaultValue={placeholders.endTime ? placeholders.endTime : ""}
 
                           type="time"
                           className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${errors.endTime ? 'border-red-500   ' : ''} `}
@@ -178,24 +219,24 @@ export default function ScheduleForm(props) {
                     </div>
                   </div>
 
-                  <div className="block">
-                    <span className="text-gray-700">Type</span>
-                    <select
-                      required={false}
-                      {...register('type')}
-
-                      className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 `}
-                    >
-                      <option value="other" selected disabled hidden>
-                        Select an Option</option>
-                      <option value="lecture">Lecture</option>
-                      <option value="webinar">Webinar</option>
-                      <option value="meeting">Meeting</option>
-                      <option value="studyGroup">Study Group</option>
-                      <option value="event">Event</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
+                  {!edit &&
+                    <div className="block">
+                      <span className="text-gray-700">Type</span>
+                      <select
+                        required={false}
+                        {...register('type')}
+                        defaultValue="other"
+                        className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 `}
+                      >
+                        <option value="lecture">Lecture</option>
+                        <option value="webinar">Webinar</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="studyGroup">Study Group</option>
+                        <option value="event">Event</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  }
 
                   <div className="block">
                     <span className="text-gray-700">Description</span>
@@ -204,6 +245,7 @@ export default function ScheduleForm(props) {
                       rows={3}
                       {...register('description')}
                       placeholder="about the event"
+                      defaultValue={placeholders.description ? placeholders.description : ""}
                     ></textarea>
                   </div>
 
@@ -217,20 +259,24 @@ export default function ScheduleForm(props) {
                       className={` bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${errors.link ? 'border-red-500  ' : ''} `}
                       // className={`mt-1 w-full rounded-md bg-gray-100 focus:bg-white focus:ring-0 focus:outline-none  focus:border-purple-500 ${errors.link ? 'border-red-500  mb-3 ' : ''} `}
                       placeholder="https://zzoom.com/meet/asdfasdfasdf"
+                      defaultValue={placeholders.link ? placeholders.link : ""}
+
                     />
                     <p className="text-red-500 text-xs italic">{errors.link?.message}</p>
                   </div>
 
-                  <div className="block">
-                    <input
-                      name="allParticipate"
-                      id="allParticipate"
-                      type="checkbox"
-                      {...register('includeEveryone')}
-                      className="rounded bg-gray-200 border-transparent focus:border-transparent focus:bg-gray-200 text-gray-700 focus:ring-1 focus:ring-offset-2 focus:ring-gray-500"
-                    />
-                    <label htmlFor="allParticipate" className="ml-2">I think everyone in this group is participating</label>
-                  </div>
+                  {!edit &&
+                    <div className="block">
+                      <input
+                        name="allParticipate"
+                        id="allParticipate"
+                        type="checkbox"
+                        {...register('includeEveryone')}
+                        className="rounded bg-gray-200 border-transparent focus:border-transparent focus:bg-gray-200 text-gray-700 focus:ring-1 focus:ring-offset-2 focus:ring-gray-500"
+                      />
+                      <label htmlFor="allParticipate" className="ml-2">I think everyone in this group is participating</label>
+                    </div>
+                  }
 
                 </form>
               </div>
@@ -264,8 +310,9 @@ export default function ScheduleForm(props) {
                 }
 
                 <button type="submit" form="newScheduleForm" className="px-4 py-2 text-white font-semibold bg-blue-500 rounded">
-                  Save
-          </button>
+                  {placeholders.name ? "Update" : "Create"}
+
+                </button>
               </div>
             </div>
           </ClickAwayListener>

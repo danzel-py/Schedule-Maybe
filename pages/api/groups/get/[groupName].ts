@@ -3,6 +3,7 @@ import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../../lib/prisma'
 import { getDaysLater, getFirstDayMonth } from "../../../../helpers/datetime"
 
+// ^ GET GROUP
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
@@ -21,7 +22,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
         include:{
           author: true,
-          schedules: true,
+          schedules: {
+            include:{
+              author : true
+            }
+          },
           users: true
         }
       })
@@ -53,7 +58,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           author: {
             name: group.author.name,
             image: group.author.image,
-            username: group.author.username
+            username: group.author.username,
+            email: group.author.email
           },
           admin: session.user.email == group.author.email,
           member: group.users.some(checkMember), 

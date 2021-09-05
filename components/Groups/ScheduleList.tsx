@@ -1,12 +1,14 @@
 import { useState } from "react"
+import { getDateFromObject, getTimeFromObject } from "../../helpers/datetime"
+
 
 export default function ScheduleList(props) {
-
+  const [showFormEdit, setShowFormEdit] = useState<boolean>(false)
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
   const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
 
-  const handleDeleteSchedule = async (id) =>{
+  const handleDeleteSchedule = async (id) => {
     setHandlingRequest(true)
     setMessage('')
     setRequestSuccess(false)
@@ -23,19 +25,18 @@ export default function ScheduleList(props) {
       .catch((err) => {
         console.error(err)
       })
-      .finally(()=>{
+      .finally(() => {
         setHandlingRequest(false)
       })
-      if (res?.message) {
-        setMessage(res.message)
-      }
-      if (res?.success) {
-        setRequestSuccess(true)
-        setMessage('')
-      }
+    if (res?.message) {
+      setMessage(res.message)
+    }
+    if (res?.success) {
+      setRequestSuccess(true)
+      setMessage('')
+    }
 
   }
-
 
   return (
     <div>
@@ -54,9 +55,26 @@ export default function ScheduleList(props) {
               {schedule.startTime}
               {" | "}
               {schedule.endTime}
-              <button onClick={()=>handleDeleteSchedule(schedule.id)}>
-                DELete
+              {props.session.user.email == schedule.author.email &&
+              <div>
+                <button onClick={() => handleDeleteSchedule(schedule.id)}>
+                  DELete
               </button>
+                  {" | "}
+              <button onClick={() => props.setShowForm(true,{
+                name: schedule.name,
+                description: schedule.description,
+                startTime: getTimeFromObject(schedule.startTime),
+                endTime: getTimeFromObject(schedule.endTime),
+                date: getDateFromObject(schedule.startTime),
+                link: schedule.link,
+                type: schedule.type,
+                id: schedule.id,
+                edit: true
+              })} >
+              edit</button>
+              </div>
+              }
             </li>
           )
         })}
