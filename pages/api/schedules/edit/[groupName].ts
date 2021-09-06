@@ -32,11 +32,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if(!group){
         throw Error("invalid group request")
       }
+      
       const user = await prisma.user.findUnique({
         where: {
           email: session.user.email
         }
       })
+
+      const schedule = await prisma.schedule.findUnique({
+        where:{
+          id
+        },
+        include:{
+          author:true
+        }
+      })
+      if(schedule.author.email != session.user.email || group.author.email != session.user.email){
+        throw Error("not eligible")
+      }
       if(!user){
         throw Error("invalid user/token")
       }

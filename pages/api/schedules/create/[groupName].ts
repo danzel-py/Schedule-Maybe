@@ -3,6 +3,7 @@ import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../../lib/prisma'
 import { getDateFromString } from "../../../../helpers/datetime"
 import { getScheduleTypes } from "../../../../interfaces/dbEnum"
+import { ServerSession } from "mongodb"
 
 // ! CREATE SCHEDULE
 
@@ -29,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       })
       
-      if(!group){
+      if(!group || (group.author.email!=session.user.email && group.users.find(user=>user.email == session.user.email))){
         throw Error("invalid group request")
       }
       const user = await prisma.user.findUnique({
