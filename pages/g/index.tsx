@@ -5,7 +5,7 @@ import Layout from '../../components/Layout'
 export async function getServerSideProps(context) {
   return {
     redirect: {
-      destination: '/g/join',
+      destination: '/groups',
       permanent: true,
     },
   }

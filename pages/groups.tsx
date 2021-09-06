@@ -1,10 +1,12 @@
 import { useSession } from 'next-auth/client'
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import useSWR from 'swr'
 import Layout from '../components/Layout'
+import {sortDescending} from '../helpers/sorter'
+import GroupList from '../components/Groups/GroupList'
+import {fetcher} from '../helpers/fetcher'
+import Link from 'next/link'
 
-const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export default function groupsPage() {
   const [session, loading] = useSession()
@@ -15,14 +17,7 @@ export default function groupsPage() {
   useEffect(()=>{
     if(data){
       let newArr = [...data.user.groupsAuthored,...data.user.groupsEnrolled]
-      newArr.sort((a,b)=>{
-        if(a.updatedAt < b.updatedAt){
-          return 1
-        }else if(a.updatedAt > b.updatedAt){
-          return -1
-        }
-        return 0
-      })
+      sortDescending(newArr,'updatedAt')
       setGroupList(newArr)
     }
   },[data])
@@ -41,19 +36,17 @@ export default function groupsPage() {
 
   return(<Layout>
       Sorted by last update
-    <ul>
-      {groupList.map((group)=>{return(
-        <li>
-          <Link href={`/g/${group.name}`}>
-          <a>
-          {group.name}
-          {group.enterKey && " me admin"}
-
-          </a>
-          </Link>
-        </li>
-      )})}    
-    </ul>
+      <GroupList groupList={groupList}/>
+      <Link href="/g/join">
+        <a>
+          join a group
+        </a>
+      </Link>
+      <Link href="/g/create">
+        <a>
+          create a group
+        </a>
+      </Link>
   </Layout>)
 
 

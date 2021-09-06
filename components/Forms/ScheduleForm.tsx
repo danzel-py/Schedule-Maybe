@@ -166,8 +166,8 @@ export default function ScheduleForm(props) {
 
 
   return (
-    <div className={`absolute h-screen inset-0 ${propsData.showForm ? "overflow-hidden" : "hidden"}`}>
-      <div className=" flex justify-center h-screen items-center bg-blue-200 bg-opacity-70  antialiased">
+    <div className={`fixed h-full w-full  inset-0 ${propsData.showForm ? "overflow-auto" : "hidden"}`}>
+      <div className="absolute inset-0 flex justify-center h-full items-center bg-blue-200 bg-opacity-70  antialiased">
         <div className="flex flex-col w-11/12 sm:w-5/6 lg:w-1/2 max-w-md mx-auto rounded-lg border border-gray-300 shadow-xl">
           <ClickAwayListener onClickAway={setShowFormLocal}>
             <div className="overflow-auto max-h-90vh rounded-lg">

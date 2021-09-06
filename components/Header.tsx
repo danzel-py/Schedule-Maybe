@@ -23,10 +23,6 @@ export default function Navbar() {
           </Link>
           {' '}
               |{' '}
-          <Link href="/profile">
-            <a>Profile</a>
-          </Link>{' '}
-          |{' '}
           <Link href="/preferences">
             <a>Preferences</a>
           </Link>

@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { useEffect, useState } from 'react'
 import ScheduleForm from '../../components/Forms/ScheduleForm'
 import { useSession } from "next-auth/client"
-import ScheduleList from '../../components/Groups/ScheduleList'
+import ScheduleList from '../../components/Schedules/ScheduleList'
 
 
 
@@ -64,6 +64,14 @@ export default function GroupPage() {
     }
   }, [session])
 
+  useEffect(()=>{
+    if(showForm){
+      document.body.style.overflow = 'hidden'
+    }else{
+      document.body.style.overflow = 'unset'
+    }
+  },[showForm])
+
   if (error) return <div>{error}</div>
   if (!data) return <div>loading...</div>
   if (message) return (
@@ -119,9 +127,9 @@ export default function GroupPage() {
           <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
             new schedule</button>
 
-          <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData}/>
         </div>
       }
+      <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData}/>
 
     </Layout>
   )
