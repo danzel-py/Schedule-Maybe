@@ -36,7 +36,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       filteredUser.groupsEnrolled = filteredGroups
     }
     // console.log(filteredUser)
-
+    // console.log(filteredUser.schedulesAuthored)
+    // console.log(filteredUser.schedulesEnrolled)
     res.send({
       user: filteredUser
 

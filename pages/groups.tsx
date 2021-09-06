@@ -28,9 +28,9 @@ export default function groupsPage() {
 
   if(!data){
     return(
-      <div>
+      <Layout>
         loading...
-      </div>
+      </Layout>
     )
   }
 

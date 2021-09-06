@@ -24,6 +24,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         name: name
       }
     })
+    if(!user){
+      throw Error("please relogin")
+    }
+    if(!group){
+      throw Error("group not found")
+    }
+
     if (user && group) {
       if (group.authorId == user.id) throw Error("you're already an author")
       if (group.enterKey != enterKey) throw Error("invalid enter key")

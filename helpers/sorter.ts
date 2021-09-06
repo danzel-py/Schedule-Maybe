@@ -24,9 +24,9 @@ export function sortDescending(arr:object[],key:string){
  */
 export function sortAscending(arr:object[],key:string){
   arr.sort((a,b)=>{
-    if(a[key] < b[key]){
+    if(a[key] > b[key]){
       return 1
-    }else if(a[key] > b[key]){
+    }else if(a[key] < b[key]){
       return -1
     }
     return 0

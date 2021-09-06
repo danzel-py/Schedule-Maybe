@@ -38,7 +38,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   }catch(err){
     if(err.code == 'P2002'){
-      console.log("ai")
       res.send({
         message: "Group name taken! Please try other name"
       })

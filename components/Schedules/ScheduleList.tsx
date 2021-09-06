@@ -62,7 +62,8 @@ export default function ScheduleList(props) {
               {schedule.startTime}
               {" | "}
               {schedule.endTime}
-              {propsData.session.user.email == schedule.author.email &&
+              {(!propsData.showcase &&
+              propsData.session.user.email == schedule.author.email) &&
               <div>
                 <button onClick={() => handleDeleteSchedule(schedule.id)}>
                   DELete

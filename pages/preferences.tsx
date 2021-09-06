@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { fetcher } from '../helpers/fetcher'
 import { useRouter } from 'next/router'
 
-export default function Profile() {
+export default function Preferences() {
   const router = useRouter()
   const [session, loading] = useSession()
   const { isValidating, data, error, mutate } = useSWR(`/api/users/get/user`, fetcher)
@@ -15,8 +15,8 @@ export default function Profile() {
     console.log(data)
   }, [data])
 
-  if(isValidating || loading){
-    return (<div>Loading...</div>)
+  if(!data){
+    return (<Layout>Loading...</Layout>)
   }
 
   if(!session){

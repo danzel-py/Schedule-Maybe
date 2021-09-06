@@ -51,6 +51,9 @@ export default function GroupPage() {
     setMessage(res.message)
     if (res.success) {
       setSuccess(true)
+      setTimeout(()=>{
+        router.push('/groups')
+      },2000)
     }
     /*
     * res.message
@@ -73,7 +76,7 @@ export default function GroupPage() {
   },[showForm])
 
   if (error) return <div>{error}</div>
-  if (!data) return <div>loading...</div>
+  if (!data) return <Layout>loading...</Layout>
   if (message) return (
     <Layout>
       {success && <>
