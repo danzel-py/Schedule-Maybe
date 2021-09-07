@@ -4,7 +4,7 @@
  * @param key {string} - 'updatedAt'
  * @returns {object[]} Updated array
  */
-export function sortDescending(arr:object[],key:string){
+export function sortDescending(arr:object[],key:string): object[]{
   arr.sort((a,b)=>{
     if(a[key] < b[key]){
       return 1
@@ -22,7 +22,7 @@ export function sortDescending(arr:object[],key:string){
  * @param key {string} - 'updatedAt'
  * @returns {object[]} Updated array
  */
-export function sortAscending(arr:object[],key:string){
+export function sortAscending(arr:object[],key:string): object[]{
   arr.sort((a,b)=>{
     if(a[key] > b[key]){
       return 1

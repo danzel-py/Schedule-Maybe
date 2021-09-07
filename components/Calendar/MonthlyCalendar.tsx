@@ -14,12 +14,17 @@ import {
 } from 'date-fns'
 import MonthlyCells from './MonthlyCells'
 
-export default function MonthlyCalendar() {
+export default function MonthlyCalendar(props) {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
-  const [currentDate, setCurrentDate] = useState<Date>(new Date())
+  const [currentDate, setCurrentDate] = useState<Date>()
+  const [scheduleList, setScheduleList] = useState<object[]>([])
   const nxMonthYearFormat = "MMMM yyyy"
   const nxDayFormat = "eee"
 
+
+  useEffect(()=>{
+    setScheduleList(props.scheduleList)
+  },[props.scheduleList])
 
   const renderDays = () => {
     const days = []
@@ -28,19 +33,21 @@ export default function MonthlyCalendar() {
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div className="" key={i}>
+        <div className="w-32 h-10" key={i}>
           {format(addDays(startDate, i), nxDayFormat)}
         </div>
       )
     }
 
-    return <div className="flex flex-row flex-nowrap gap-x-1">{days}</div>;
+    return <div className="flex flex-row justify-center flex-nowrap gap-x-2">{days}</div>;
+  }
+
+  const showDetail = () => {
+    
   }
 
 
-
   const handleSetCurrentDate = (date) => {
-    console.log(date)
     setCurrentDate(new Date(date))
   }
 
@@ -53,28 +60,29 @@ export default function MonthlyCalendar() {
   }
 
   return (
-    <div>
-      <div className="flex flex-row flex-nowrap gap-x-2 h-10">
-        <div className="w-64"  onClick={prevMonth}>
-          <div className="icon">
-            {"<"}
+      <div className="flex flex-col w-full justify-center ">
+        <div className="flex text-center items-center justify-center flex-row flex-nowrap gap-x-6 h-20">
+          <div className="w-64" onClick={prevMonth}>
+            <div className="bg-gray-100 hover:bg-gray-200">
+              {"<"}
+            </div>
+          </div>
+          <div className="w-96">
+            <span>{format(currentMonth, nxMonthYearFormat)}</span>
+          </div>
+          <div className="w-64" onClick={nextMonth}>
+            <div className="bg-gray-100 hover:bg-gray-200">
+              {">"}
+            </div>
           </div>
         </div>
-        <div className="w-96">
-          <span>{format(currentMonth, nxMonthYearFormat)}</span>
-        </div>
-        <div className="w-64" onClick={nextMonth}>
-          <div className="icon">
-            {">"}
-          </div>
-        </div>
+
+        {renderDays()}
+        <MonthlyCells setCurrentDate={handleSetCurrentDate} currentMonth={currentMonth} currentDate={currentDate} scheduleList={scheduleList} />
+
+        {/* {format(currentDate, "eee d MMM yy")} */}
+
+
       </div>
-
-      {renderDays()}
-      <MonthlyCells setCurrentDate={handleSetCurrentDate} currentMonth={currentMonth} currentDate={currentDate} />
-      {format(currentDate, "eee d MMM yy")}
-
-
-    </div>
   )
 }
