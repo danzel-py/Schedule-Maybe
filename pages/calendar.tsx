@@ -38,7 +38,7 @@ export default function Calendar() {
       <h1>
         caleeeendaaar
       </h1>
-      <MonthlyCalendar className="flex-shrink-0" scheduleList={scheduleList}/>
+      <MonthlyCalendar scheduleList={scheduleList}/>
 
     </Layout>
   )

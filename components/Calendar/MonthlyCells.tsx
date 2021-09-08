@@ -44,11 +44,11 @@ export default function renderCells(props) {
   const renderSchedule = (paramDay)=>{
     let dailySchedule = scheduleList.filter(sch=>isSameDay(paramDay, parseISO(sch.startTime)))
     
-    return(<ul>
+    return(<ul className="w-full flex-row">
       {dailySchedule.map((e,i)=>{
         return(
-
-          <li className="" key={i}>
+          
+          <li className="w-full overflow-hidden" key={i}>
           {e.type}
         </li>
           )
@@ -70,7 +70,7 @@ export default function renderCells(props) {
       dateNum = format(day, dateFormat);
       days.push(
         <div
-          className={`w-32 h-20 overflow-clip
+          className={`h-20 flex flex-row border border-indigo-400 border-solid md:border-none
           ${!isSameMonth(day, monthStart)
               ?
               isSameDay(day, props.currentDate) ? "bg-gray-400" : "bg-gray-100"
@@ -79,14 +79,17 @@ export default function renderCells(props) {
           key={dateNum + rows.length + i}
           onClick={() => props.setCurrentDate(dayv2)}
         >
-          <span className={`${isToday(day) && "text-blue-800 border-solid border-4 rounded-full border-blue-500"}`}>{dateNum}</span>
+
+          <span className={`w-6 h-8 ${isToday(day) && "text-blue-800 bg-green-200"}`}>{dateNum}</span>
+          <div className="w-full overflow-hidden">
           {renderSchedule(dayv2)}
+          </div>
         </div>
       );
       day = addDays(day, 1);
     }
     rows.push(
-      <div className="flex flex-row justify-center gap-x-2" key={dateNum + "7" + rows.length}>
+      <div className="grid grid-cols-7 justify-center  md:gap-x-2 " key={dateNum + "7" + rows.length}>
         {days}
       </div>
     );
@@ -95,5 +98,7 @@ export default function renderCells(props) {
   if (!rows) {
     return <div></div>
   }
-  return <div className="flex flex-col gap-y-2">{rows}</div>;
+  return <div className="border border-indigo-400 border-solid md:border-none">
+      <div className="flex flex-col md:gap-y-2 ">{rows}</div>
+    </div>
 }

@@ -33,13 +33,13 @@ export default function MonthlyCalendar(props) {
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div className="w-32 h-10" key={i}>
+        <div className="h-10" key={i}>
           {format(addDays(startDate, i), nxDayFormat)}
         </div>
       )
     }
 
-    return <div className="flex flex-row justify-center flex-nowrap gap-x-2">{days}</div>;
+    return <div className="grid grid-cols-7 justify-center  flex-nowrap md:gap-x-2">{days}</div>;
   }
 
   const showDetail = () => {
@@ -60,14 +60,18 @@ export default function MonthlyCalendar(props) {
   }
 
   return (
-      <div className="flex flex-col w-full justify-center ">
-        <div className="flex text-center items-center justify-center flex-row flex-nowrap gap-x-6 h-20">
+    <div className='block m-auto max-w-5xl min-w-5xl'>
+
+      <div id="monthly-calendar-wrapper" 
+      className="flex flex-col max-w-5xl min-w-5xl" 
+      >
+        <div className="flex w-full text-center items-center justify-center flex-row flex-nowrap gap-x-6 h-20">
           <div className="w-64" onClick={prevMonth}>
             <div className="bg-gray-100 hover:bg-gray-200">
               {"<"}
             </div>
           </div>
-          <div className="w-96">
+          <div className="w-96 ">
             <span>{format(currentMonth, nxMonthYearFormat)}</span>
           </div>
           <div className="w-64" onClick={nextMonth}>
@@ -84,5 +88,7 @@ export default function MonthlyCalendar(props) {
 
 
       </div>
+    </div>
+
   )
 }
