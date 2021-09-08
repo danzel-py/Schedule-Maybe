@@ -44,17 +44,17 @@ export default function ScheduleForm(props) {
       .nullable()
   })
 
-  
+
   const { register, formState: { errors }, handleSubmit, reset } = useForm<IFormCreateSchedule>({
     resolver: yupResolver(validationSchema)
   })
 
 
-  useEffect(()=>{
+  useEffect(() => {
     setPropsData(props)
-  },[props])
-  
-  useEffect(()=>{
+  }, [props])
+
+  useEffect(() => {
     // :) react-hook-form moment
     let formDefaultValues = {
       name: placeholders.name,
@@ -63,13 +63,13 @@ export default function ScheduleForm(props) {
       endTime: placeholders.endTime,
       description: placeholders.description,
       link: placeholders.link
-  
+
     }
-    if(placeholders){
+    if (placeholders) {
       reset(formDefaultValues)
     }
 
-  },[reset,placeholders])
+  }, [reset, placeholders])
 
   useEffect(() => {
     var today = new Date();
@@ -103,15 +103,15 @@ export default function ScheduleForm(props) {
     if (formData.startTime > formData.endTime) {
       return setMessage("Invalid end time")
     }
-    if(edit){
-      if(
-          formData.name == placeholders.name
-      &&  formData.description == placeholders.description
-      &&  formData.date == placeholders.date
-      &&  formData.startTime == placeholders.startTime
-      &&  formData.endTime == placeholders.endTime
-      &&  formData.link == placeholders.link
-      ){
+    if (edit) {
+      if (
+        formData.name == placeholders.name
+        && formData.description == placeholders.description
+        && formData.date == placeholders.date
+        && formData.startTime == placeholders.startTime
+        && formData.endTime == placeholders.endTime
+        && formData.link == placeholders.link
+      ) {
         console.log("sama smua")
         return setMessage("Nothing to update")
       }
@@ -167,7 +167,7 @@ export default function ScheduleForm(props) {
 
   return (
     <div className={`fixed h-full w-full  inset-0 ${propsData.showForm ? "overflow-auto" : "hidden"}`}>
-      <div className="absolute inset-0 flex justify-center h-full items-center bg-blue-200 bg-opacity-70  antialiased">
+      <div className="absolute inset-0 flex justify-center h-full items-center bg-blue-200 bg-opacity-70 antialiased">
         <div className="flex flex-col w-11/12 sm:w-5/6 lg:w-1/2 max-w-md mx-auto rounded-lg border border-gray-300 shadow-xl">
           <ClickAwayListener onClickAway={setShowFormLocal}>
             <div className="overflow-auto max-h-90vh rounded-lg">

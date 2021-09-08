@@ -4,19 +4,15 @@ import {
   addMonths,
   subMonths,
   startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-  isSameMonth,
-  isSameDay,
   addDays,
-  parse
+  parse,
+  maxTime
 } from 'date-fns'
 import MonthlyCells from './MonthlyCells'
 
 export default function MonthlyCalendar(props) {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
-  const [currentDate, setCurrentDate] = useState<Date>()
+  const [currentDate, setCurrentDate] = useState<Date>(new Date(maxTime))
   const [scheduleList, setScheduleList] = useState<object[]>([])
   const nxMonthYearFormat = "MMMM yyyy"
   const nxDayFormat = "eee"
@@ -24,7 +20,11 @@ export default function MonthlyCalendar(props) {
 
   useEffect(()=>{
     setScheduleList(props.scheduleList)
-  },[props.scheduleList])
+  },[props])
+  useEffect(()=>{
+
+    props.setCurrentDate(currentDate)
+  },[currentDate])
 
   const renderDays = () => {
     const days = []
@@ -42,11 +42,6 @@ export default function MonthlyCalendar(props) {
     return <div className="grid grid-cols-7 justify-center  flex-nowrap md:gap-x-2">{days}</div>;
   }
 
-  const showDetail = () => {
-    
-  }
-
-
   const handleSetCurrentDate = (date) => {
     setCurrentDate(new Date(date))
   }
@@ -60,10 +55,10 @@ export default function MonthlyCalendar(props) {
   }
 
   return (
-    <div className='block m-auto max-w-5xl min-w-5xl'>
+    <div className='block m-auto max-w-6xl'>
 
       <div id="monthly-calendar-wrapper" 
-      className="flex flex-col max-w-5xl min-w-5xl" 
+      className="flex flex-col max-w-6xl min-w-5xl" 
       >
         <div className="flex w-full text-center items-center justify-center flex-row flex-nowrap gap-x-6 h-20">
           <div className="w-64" onClick={prevMonth}>
@@ -83,9 +78,6 @@ export default function MonthlyCalendar(props) {
 
         {renderDays()}
         <MonthlyCells setCurrentDate={handleSetCurrentDate} currentMonth={currentMonth} currentDate={currentDate} scheduleList={scheduleList} />
-
-        {/* {format(currentDate, "eee d MMM yy")} */}
-
 
       </div>
     </div>

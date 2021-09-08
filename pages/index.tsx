@@ -24,7 +24,7 @@ export default function IndexPage() {
       </h1>
       <button
         onClick={() =>
-          signIn("google", { callbackUrl: "http://localhost:3000/dashboard/" })
+          signIn("google", { callbackUrl: process.env.NEXT_PUBLIC_URL+"/dashboard/" })
         }
       > Sign in
       </button>

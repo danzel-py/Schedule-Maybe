@@ -4,13 +4,17 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { session, useSession } from 'next-auth/client'
 import { fetcher } from '../helpers/fetcher'
+import { format, maxTime } from 'date-fns'
 import useSWR from 'swr'
+import PopupSchedule from '../components/Schedules/PopupSchedule'
+
 
 
 export default function Calendar() {
   const router = useRouter()
   const [session, loading] = useSession()
   const [scheduleList, setScheduleList] = useState<object[]>([])
+  const [currentDate, setCurrentDate] = useState<Date>(new Date(maxTime))
   const { isValidating, data, error, mutate } = useSWR(`/api/users/get/schedules`, fetcher)
 
 
@@ -27,18 +31,25 @@ export default function Calendar() {
     }
   },[data])
 
-  if(!data){
+  const handleSetCurrentDate = (date) =>{
+    setCurrentDate(new Date(date))
+  }
+
+  if(!data || !session){
     return (<Layout>
-      loading...
+      getting data...
     </Layout>)
   }
 
   return (
     <Layout>
       <h1>
-        caleeeendaaar
+        caleeeendaaar {isValidating && "updating data..."}
       </h1>
-      <MonthlyCalendar scheduleList={scheduleList}/>
+      <MonthlyCalendar scheduleList={scheduleList} setCurrentDate = {handleSetCurrentDate}/>
+      {format(currentDate,"d y")}
+
+      <PopupSchedule scheduleList={scheduleList} session={session} currentDate={currentDate} setCurrentDate={handleSetCurrentDate}/>
 
     </Layout>
   )

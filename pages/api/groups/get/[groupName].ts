@@ -56,6 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           name: group.name,
           about: group.about,
           author: {
+            id: group.author.id,
             name: group.author.name,
             image: group.author.image,
             username: group.author.username,

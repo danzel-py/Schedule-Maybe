@@ -124,7 +124,7 @@ export default function GroupPage() {
       {(data.groupData.member || data.groupData.admin) &&
         <div>
           Member/admin only <br></br>
-          <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} setShowForm={handleSetShowForm} />
+          <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} groupAuthorId={data.groupData.author.id} setShowForm={handleSetShowForm} />
 
 
           <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">

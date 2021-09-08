@@ -10,6 +10,7 @@ export default function ScheduleList(props) {
 
   useEffect(()=>{
     setPropsData(props)
+    console.log(props)
   },[props])
 
   const handleDeleteSchedule = async (id) => {
@@ -63,7 +64,11 @@ export default function ScheduleList(props) {
               {" | "}
               {schedule.endTime}
               {(!propsData.showcase &&
-              propsData.session.user.email == schedule.author.email) &&
+              (
+                propsData.session.user.email == schedule.author.email
+                || propsData.groupAuthorId == propsData.session.id) 
+              ) 
+              &&
               <div>
                 <button onClick={() => handleDeleteSchedule(schedule.id)}>
                   DELete
