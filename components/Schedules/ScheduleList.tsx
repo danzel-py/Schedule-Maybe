@@ -10,7 +10,7 @@ export default function ScheduleList(props) {
 
   useEffect(()=>{
     setPropsData(props)
-    console.log(props)
+    // console.log(props)
   },[props])
 
   const handleDeleteSchedule = async (id) => {

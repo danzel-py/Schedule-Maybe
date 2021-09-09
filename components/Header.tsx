@@ -19,7 +19,7 @@ export default function Navbar() {
           </Link>{' '}
           |{' '}
           <Link href="/groups">
-            <a>My Groups</a>
+            <a>Groups</a>
           </Link>
           {' '}
               |{' '}

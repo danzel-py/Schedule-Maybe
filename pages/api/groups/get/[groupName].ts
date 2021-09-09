@@ -3,7 +3,12 @@ import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../../lib/prisma'
 import { getDaysLater, getFirstDayMonth } from "../../../../helpers/datetime"
 
-// ^ GET GROUP
+// * GET GROUP
+/*
+groupData on success
+groupData.enterKey on admin
+on fail deliver groupNotFound: true
+*/
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
@@ -27,12 +32,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               author : true
             }
           },
-          users: true
+          users: {
+            select:{
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       })
       if(!group){
         throw Error("group not found")
       }
+
+      const isAdmin = session.id == group.authorId
 
       let tmp = group.schedules.filter(schedule=>
         schedule.startTime >= getDaysLater(-40) && schedule.startTime < getDaysLater(40) 
@@ -48,11 +61,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
       group.schedules = tmp
 
+      let memberList = group.users
 
       const checkMember = (e)=> e.email == session.user.email
 
       res.send({
         groupData: {
+          id: group.id,
           name: group.name,
           about: group.about,
           author: {
@@ -62,8 +77,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             username: group.author.username,
             email: group.author.email
           },
-          admin: session.user.email == group.author.email,
+          admin: isAdmin,
           member: group.users.some(checkMember), 
+          ...(isAdmin && {enterKey: group.enterKey}),
+          ...(isAdmin && {memberList}),
           schedules: group.schedules
         }
       })
@@ -77,13 +94,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       groupNotFound: true
     })
   }
-  
-  /*
-  
-  * on success send groupData
-
-  * on fail deliver groupNotFound: true
-*/
-
-  
 }

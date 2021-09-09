@@ -4,7 +4,7 @@ export default function Layout({ children }) {
   return (
     <>
       <Header />
-      <main>{children}</main>
+      <main className="mx-auto sm:py-1 sm:px-2 p-0">{children}</main>
     </>
   )
 }

@@ -82,8 +82,8 @@ export default function renderCells(props) {
           className={`h-20 flex flex-col  sm:flex-row border border-indigo-400 border-solid md:border-none
           ${!isSameMonth(day, monthStart)
               ?
-              isSameDay(day, props.currentDate) ? "bg-gray-400" : "bg-gray-100"
-              : isSameDay(day, props.currentDate) ? "bg-blue-400" : "bg-blue-100"
+              isSameDay(day, props.currentDate) ? "bg-gray-400 hover:bg-gray-500" : "bg-gray-100 hover:bg-gray-200"
+              : isSameDay(day, props.currentDate) ? "bg-blue-400 hover:bg-blue-500" : "bg-blue-100 hover:bg-blue-200"
             }`}
           key={dateNum + rows.length + i}
           onClick={() => props.setCurrentDate(dayv2)}

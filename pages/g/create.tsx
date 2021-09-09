@@ -171,7 +171,7 @@ export default function CreateGroup() {
             <div className="md:flex md:items-center">
               <div className="md:w-1/3"></div>
               <div className="md:w-2/3 flex items-center justify-between">
-                <button className="md:w-3/12 shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                <button className="md:w-4/12 shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
                   Create
               </button>
                 <div className="md:w-3/9"></div>
