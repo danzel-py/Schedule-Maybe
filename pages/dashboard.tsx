@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { fetcher } from '../helpers/fetcher'
 import { useRouter } from 'next/router'
 import { sortAscending, sortDescending } from '../helpers/sorter'
-import ScheduleList from '../components/Schedules/ScheduleList'
+import ScheduleBoard from '../components/Schedules/ScheduleBoard'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -24,6 +24,7 @@ export default function Dashboard() {
       console.log(data)
       let newArr = [...data.user.schedulesAuthored, ...data.user.schedulesEnrolled]
       sortAscending(newArr, 'startTime')
+      
       setScheduleList(newArr)
     }
   },[data])
@@ -40,8 +41,7 @@ export default function Dashboard() {
       <h1>
         Hi, {data.user.name}
       </h1>
-      upcoming schedules:
-      <ScheduleList schedules={scheduleList} session={session} showcase={true} />
+      <ScheduleBoard schedules={scheduleList} session={session} showcase={true} />
 
     </Layout>
   )

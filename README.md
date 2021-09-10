@@ -6,16 +6,20 @@ TODO:
 - ~~Signup~~ ~~lazy, try next-auth~~
 - ~~Login & Auth~~
 - Groups:
-  - ~~model~~, ~~cr~~u~~d~~
+  - ~~model~~, ~~crud~~, public/private group?
+  - ~~kick~~
+  - invitation
 - Schedule:
   - ~~model~~, ~~cr~~ud
+  - individual schedule?
 - build pages:
   - groups
-    - enrolled groups + some public groups
-  - each group
-    - crud schedule here
+    - ~~enrolled groups~~ + some public groups
+  - ~~each group~~
+    - ~~crud schedule here~~
+    - ~~edit~~
   - calendar
-    - monthly
+    - ~~monthly~~, crud here?
     - weekly
     - daily
   - dashboard
@@ -24,4 +28,9 @@ TODO:
 - Layout & Styling
 - TBA
 
-tbh idk what to do
+
+Ideas:
+- assignment deadline system 
+
+Future stuff:
+- language

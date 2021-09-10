@@ -32,12 +32,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const filteredGroups = user.groupsEnrolled.map(element => {
         return omit(element, 'enterKey')
       });
-      // console.log(filteredGroups)
       filteredUser.groupsEnrolled = filteredGroups
     }
-    // console.log(filteredUser)
-    // console.log(filteredUser.schedulesAuthored)
-    // console.log(filteredUser.schedulesEnrolled)
     res.send({
       user: filteredUser
 
