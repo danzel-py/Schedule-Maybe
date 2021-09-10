@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { IFormCreateSchedule } from '../../interfaces/interfaces'
+import { IFormCreateSchedule } from '../../types/form'
 import ClickAwayListener from 'react-click-away-listener'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'

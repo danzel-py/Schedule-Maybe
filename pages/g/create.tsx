@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
-import { IFormCreateGroup } from '../../interfaces/interfaces'
+import { IFormCreateGroup } from '../../types/form'
 import Router from 'next/router'
 
 

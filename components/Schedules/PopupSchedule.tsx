@@ -3,9 +3,43 @@ import { maxTime, format, isSameDay, parseISO } from 'date-fns'
 import ClickAwayListener from 'react-click-away-listener'
 import { sortAscending } from '../../helpers/sorter'
 
+// todo?: add schedule here maybe
+// todo: on success mutate
 
 export default function PopupSchedule(props) {
+  const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
+  const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('')
 
+
+  const deleteOrUnenrollSchedule = async (id:Number, unenroll = false) => {
+    setHandlingRequest(true)
+    setMessage('')
+    setRequestSuccess(false)
+    const res = await fetch(`/api/schedules/${unenroll? "unenroll":"purge"}`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        id
+      })
+    })
+      .then(r => r.json())
+      .catch((err) => {
+        console.error(err)
+      })
+      .finally(() => {
+        setHandlingRequest(false)
+      })
+    if (res?.message) {
+      setMessage(res.message)
+    }
+    if (res?.success) {
+      setRequestSuccess(true)
+      setMessage('')
+    }
+  }
 
 
   const renderSchedule = () => {
@@ -33,7 +67,10 @@ export default function PopupSchedule(props) {
                   <div className="text-xl">
                     {e.name}
                   </div>
-                  <button className="text-xs text-gray-400">
+                  <button 
+                  className="text-xs text-gray-400"
+                  onClick={()=>deleteOrUnenrollSchedule(e.id,props.session.id != e.authorId)}
+                  >
                     {props.session.id == e.authorId ? "delete" : "unenroll"}
                   </button>
                 </div>

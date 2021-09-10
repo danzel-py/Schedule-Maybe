@@ -70,7 +70,7 @@ export default function ScheduleList(props) {
     propsData.schedules.forEach((schedule) => {
       let startTimeISO = parseISO(schedule.startTime)
       if (isBefore(startTimeISO, startOfToday())) {
-        past.push(schedule)
+        past.unshift(schedule)
       } else {
         future.push(schedule)
         if (isToday(startTimeISO)) {

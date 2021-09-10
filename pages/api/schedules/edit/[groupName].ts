@@ -2,7 +2,7 @@ import { getSession } from "next-auth/client"
 import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../../lib/prisma'
 import { getDateFromString } from "../../../../helpers/datetime"
-import { getScheduleTypes } from "../../../../interfaces/dbEnum"
+import { getScheduleTypes } from "../../../../types/dbEnum"
 
 // ! UPDATE SCHEDULE
 
