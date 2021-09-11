@@ -75,7 +75,7 @@ export default function ScheduleList(props) {
         future.push(schedule)
         if (isToday(startTimeISO)) {
           today.push(schedule)
-        } 
+        }
         if (isBefore(startTimeISO, addDays(startOfToday(), 7))) {
           week.push(schedule)
         }
@@ -108,6 +108,26 @@ export default function ScheduleList(props) {
       setBoard(propsData.schedules)
     }
   }, [boardNum])
+
+  const getCount = (param: number) => {
+    if (param == 0) {
+      return todaySchedule.length;
+    }
+    else if (param == 1) {
+      return weekSchedule.length;
+    }
+    else if (param == 2) {
+      return monthSchedule.length;
+
+    }
+    else if (param == 3) {
+      return futureSchedule.length;
+
+    }
+    else {
+      return 0;
+    }
+  }
 
   const handleDeleteSchedule = async (id) => {
     setHandlingRequest(true)
@@ -145,18 +165,24 @@ export default function ScheduleList(props) {
       <div className="flex flex-row flex-wrap py-4">
         <aside className="w-full sm:w-1/3 md:w-1/4 px-2">
           <div className="sticky top-0 p-4 w-full">
-            {/* <!-- navigation --> */}
+            {/* !NAV */}
             <ul className="flex flex-col gap-y-2 overflow-hidden">
               {
                 asideData.map((a) => {
                   return (
 
                     <li
-                      className={`${a.id == boardNum? "bg-gray-400":"bg-gray-100 hover:bg-gray-200"} `}
+                      className={`flex flex-row justify-between ${a.id == boardNum ? "bg-gray-400" : "bg-gray-100 hover:bg-gray-200"} `}
                       key={a.id}
                       onClick={() => setBoardNum(a.id)}
                     >
-                      {a.text}
+                      <p>
+                        {a.text}
+                      </p>
+                      <p className="text-gray-500">
+                        {getCount(a.id) ? getCount(a.id) : ""}
+                      </p>
+
                     </li>
                   )
                 })
@@ -164,6 +190,8 @@ export default function ScheduleList(props) {
             </ul>
           </div>
         </aside>
+
+
         <main role="main" className="w-full sm:w-2/3 md:w-3/4 pt-1 px-2">
           <ul className='flex flex-col '>
             {

@@ -47,7 +47,7 @@ export default function Calendar() {
         caleeeendaaar {isValidating && "updating data..."}
       </h1>
       <MonthlyCalendar scheduleList={scheduleList} setCurrentDate = {handleSetCurrentDate}/>
-      {format(currentDate,"d y")}
+      {/* {format(currentDate,"d y")} */}
 
       <PopupSchedule scheduleList={scheduleList} session={session} currentDate={currentDate} setCurrentDate={handleSetCurrentDate}/>
 
