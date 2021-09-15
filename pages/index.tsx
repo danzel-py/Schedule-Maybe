@@ -2,6 +2,7 @@ import Layout from '../components/Layout'
 import { signIn, signOut, useSession } from "next-auth/client"
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 
 export default function IndexPage() {
@@ -14,6 +15,9 @@ export default function IndexPage() {
 
   return (
     <Layout>
+      <Head>
+      <meta name="google-site-verification" content="nrJ2urtaStsY3IoUvUq5QiodaQCP_k_toubGOApy82k" />
+      </Head>
       <div className="sm:h-64 h-screen bg-red-100 flex sm:flex-row flex-col justify-center items-center sm:gap-x-8 gap-y-8">
 
 
