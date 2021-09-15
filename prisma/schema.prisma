@@ -46,17 +46,17 @@ model VerificationRequest {
 }
 
 model Group {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique
-  enterKey String
-  about    String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  public   Boolean @default(true)
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  enterKey  String
+  about     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  public    Boolean  @default(true)
 
 
   // relational
-  author    User      @relation(fields: [authorId], references: [id], name: "group-author")
+  author    User       @relation(fields: [authorId], references: [id], name: "group-author")
   authorId  Int
   users     User[]     @relation(name: "group-enroll")
   schedules Schedule[]
@@ -103,7 +103,16 @@ model Schedule {
   group    Group  @relation(fields: [groupId], references: [id])
   groupId  Int
   users    User[] @relation("schedule-enroll")
+  tags     Tag[]
   @@map(name: "schedules")
+}
+
+model Tag {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  schedules Schedule[]
+  createdAt DateTime   @default(now()) @map(name: "created_at")
+  updatedAt DateTime   @updatedAt @map(name: "updated_at")
 }
 
 enum ScheduleType {
@@ -113,7 +122,7 @@ enum ScheduleType {
   MEETING
   EVENT
   OTHER
-  SPECIFIC  
+  SPECIFIC
 }
 
 // npx prisma studio

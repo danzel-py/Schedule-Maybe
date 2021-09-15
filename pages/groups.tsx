@@ -7,6 +7,7 @@ import GroupList from '../components/Groups/GroupList'
 import { fetcher } from '../helpers/fetcher'
 import Link from 'next/link'
 
+// TODO: display member count
 
 export default function groupsPage() {
   const [session, loading] = useSession()
@@ -41,9 +42,11 @@ export default function groupsPage() {
         last update
       </button>
     </div>
-    <div className="flex flex-row justify-between max-w-lg">
-      <GroupList groupList={groupList} />
-      <nav className="flex flex-col justify-evenly">
+    <div className="flex sm:flex-row flex-col justify-between max-w-2xl">
+      <div className="sm:w-2/3 w-5/6 self-center">
+        <GroupList groupList={groupList} />
+      </div>
+      <nav className="flex flex-col justify-center items-center sm:w-1/3">
 
         <Link href="/g/join">
           <a
@@ -52,6 +55,7 @@ export default function groupsPage() {
             join a group
         </a>
         </Link>
+        <p>or</p>
         <Link href="/g/create">
           <a
             className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"

@@ -10,7 +10,7 @@ export default function GroupList(props) {
   }, [props.groupList])
 
   return (
-    <ul className="w-1/2 divide-y-2">
+    <ul className="w-full divide-y-2">
       {props.groupList.map((group) => {
         return (
           <li className="hover:bg-red-100">

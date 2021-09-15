@@ -32,6 +32,7 @@ export default function GroupMemberList(props) {
 
   return (
     <ul className="divide-y-2">
+      Member list:
       {
         props.memberList.map((member, i) => {
           return (
