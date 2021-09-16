@@ -24,36 +24,55 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         name: name
       }
     })
-    if(!user){
+    if (!user) {
       throw Error("please relogin")
     }
-    if(!group){
+    if (!group) {
       throw Error("group not found")
     }
 
     if (user && group) {
       if (group.authorId == user.id) throw Error("you're already an author")
       if (group.enterKey != enterKey) throw Error("invalid enter key")
-      const updateGroup = await prisma.user.update({
+      const updateGroup = await prisma.group.update({
         where: {
-          id: user.id,
+          id: group.id,
         },
         data: {
-          groupsEnrolled: {
+          users: {
             connect: {
-              id: group.id,
+              id: user.id,
             },
           },
         },
+        include: {
+          schedules: true
+        }
       })
-        .then((data) => {
-          console.log(data)
-          res.send({
-            success: true,
-            groupName: name
-          })
-          res.status(200).end()
+      if (updateGroup) {
+        const userUpdate = await prisma.user.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            schedulesEnrolled: {
+              connect: updateGroup.schedules.map((sch) => {
+                return { id: sch.id }
+              })
+
+
+            }
+          }
         })
+
+        res.send({
+          success: true,
+          groupName: name
+        })
+      } else {
+        throw invalidData('cant join group')
+      }
+
     }
     else {
       throw invalidData('incorrect user/group')

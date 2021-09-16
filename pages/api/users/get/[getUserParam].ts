@@ -37,7 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         ...(inSchedules && { schedulesEnrolled: true, schedulesAuthored: true })
       }
     })
-    console.log(user);
+    // console.log(user);
 
     let otherGroups;
     if (inGroups) {

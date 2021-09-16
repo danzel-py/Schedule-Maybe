@@ -49,7 +49,7 @@ export default function Calendar() {
       <MonthlyCalendar scheduleList={scheduleList} setCurrentDate = {handleSetCurrentDate}/>
       {/* {format(currentDate,"d y")} */}
 
-      <PopupSchedule scheduleList={scheduleList} session={session} currentDate={currentDate} setCurrentDate={handleSetCurrentDate}/>
+      <PopupSchedule mutate={mutate} scheduleList={scheduleList} session={session} currentDate={currentDate} setCurrentDate={handleSetCurrentDate}/>
 
     </Layout>
   )

@@ -5,12 +5,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import { IFormCreateGroup } from '../../types/form'
 import { useRouter } from 'next/router'
-import { MessageChannel } from 'worker_threads'
 
 export default function GroupEditForm(props) {
   const router = useRouter()
   const [message, setMessage] = useState<string>('')
   const [success, setSuccess] = useState<boolean>(false)
+  const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
 
 
   const validationSchema = Yup.object().shape({
@@ -29,13 +29,22 @@ export default function GroupEditForm(props) {
       .max(10, 'Too lengthy! Must not exceed 10 characters')
   })
 
-
-
-
-
   const { reset, register, formState: { errors }, handleSubmit } = useForm<IFormCreateGroup>({
     resolver: yupResolver(validationSchema)
   })
+
+  useEffect(() => {
+    // :) react-hook-form moment
+    let formDefaultValues = {
+      name: props.groupData.name,
+      about: props.groupData.about,
+      enterKey: props.groupData.enterKey
+    }
+    if (props.groupData) {
+      reset(formDefaultValues)
+    }
+
+  }, [reset, props.groupData])
 
   async function handleEdit(formData: IFormCreateGroup) {
     if (
@@ -45,6 +54,7 @@ export default function GroupEditForm(props) {
     ){
       return
     }
+
     const res = await fetch(`/api/groups/edit/${props.groupData.id}`, {
       method: 'POST',
       headers: {
@@ -77,19 +87,28 @@ export default function GroupEditForm(props) {
     setMessage(res.message)
   }
 
-  useEffect(() => {
-    // :) react-hook-form moment
-    let formDefaultValues = {
-      name: props.groupData.name,
-      about: props.groupData.about,
-      enterKey: props.groupData.enterKey
+  async function handlePurge(){
+    const res = await fetch(`/api/groups/purge/${props.groupData.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }
+    })
+      .then(r => r.json())
+      .catch((err) => {
+        console.error(err)
+      })
+    if (res.success) {
+      setSuccess(true)
+      setTimeout(()=>{
+        router.push(`/groups`)
+      },2000)
     }
-    if (props.groupData) {
-      reset(formDefaultValues)
-    }
+    setMessage(res.message)
+  }
+  
 
-  }, [reset, props.groupData])
-
+  
 
 
 
@@ -186,6 +205,11 @@ export default function GroupEditForm(props) {
               <div className="">
                 
               </div>
+              <button className="text-red-500 bg-red-100 text-xs"
+              onClick={()=>{handlePurge()}}
+              >
+                delete group
+              </button>
             </div>
           </div>
 

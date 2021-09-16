@@ -10,7 +10,6 @@ import {
   addDays,
   parseISO
 } from 'date-fns'
-import { parse } from "path/posix"
 
 // todo: handle delete/unenroll schedule
 
@@ -128,6 +127,38 @@ export default function ScheduleList(props) {
       return 0;
     }
   }
+  const handleUnenrollSchedule = async (id) => {
+    setHandlingRequest(true)
+    setMessage('')
+    setRequestSuccess(false)
+    const res = await fetch(`/api/schedules/unenroll`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        id
+      })
+    })
+      .then(r => r.json())
+      .catch((err) => {
+        console.error(err)
+      })
+      .finally(() => {
+        setHandlingRequest(false)
+      })
+    if (res?.message) {
+      setMessage(res.message)
+    }
+    if (res?.success) {
+      setRequestSuccess(true)
+      setMessage('')
+      setTimeout(()=>{
+        props.mutate();
+      },1000)
+    }
+
+  }
 
   const handleDeleteSchedule = async (id) => {
     setHandlingRequest(true)
@@ -155,6 +186,9 @@ export default function ScheduleList(props) {
     if (res?.success) {
       setRequestSuccess(true)
       setMessage('')
+      setTimeout(()=>{
+        props.mutate();
+      },1000)
     }
 
   }
@@ -193,6 +227,8 @@ export default function ScheduleList(props) {
 
 
         <main role="main" className="w-full sm:w-2/3 md:w-3/4 pt-1 px-2">
+        {requestSuccess && "Success."}
+                        {message && message}
           <ul className='flex flex-col '>
             {
               board.map((e, i) => {
@@ -230,9 +266,15 @@ export default function ScheduleList(props) {
                         <div className="text-xl">
                           {e.name}
                         </div>
-                        <button className="text-xs text-gray-400">
-                          {props.session.id == e.authorId ? "delete" : "unenroll"}
-                        </button>
+                        {props.session.id == e.authorId ?
+                          <button className="text-xs text-gray-400" onClick={()=>handleDeleteSchedule(e.id)}>
+                            delete
+                          </button>
+                          :
+                          <button className="text-xs text-gray-400" onClick={()=>handleUnenrollSchedule(e.id)}>
+                            unenroll
+                          </button>
+                        }
                       </div>
                       <div className='text-sm ml-2'>
                         {e.description}
@@ -243,6 +285,7 @@ export default function ScheduleList(props) {
                             </p>
                           </a>
                         }
+                        
                       </div>
                     </div>
                   </li>
@@ -252,6 +295,6 @@ export default function ScheduleList(props) {
           </ul>
         </main>
       </div>
-    </div>
+    </div >
   )
 }

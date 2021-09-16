@@ -38,6 +38,10 @@ export default function PopupSchedule(props) {
     if (res?.success) {
       setRequestSuccess(true)
       setMessage('')
+      setTimeout(()=>{
+        setRequestSuccess(false)
+        props.mutate()
+      },1000)
     }
   }
 
@@ -122,7 +126,7 @@ export default function PopupSchedule(props) {
                 >
                   <button onClick={handleSetCurrentDate} className="font-semibold text-sm text-gray-600">Close</button>
 
-                  {/* {(message && !requestSuccess && !handlingRequest) &&
+                  {(message && !requestSuccess && !handlingRequest) &&
                   <div className="flex justify-between text-red-50 shadow-inner rounded px-2 bg-red-600">
                     <p className="self-center text-xs italic">{message}</p><strong onClick={() => setMessage('')} className="text-xl align-center cursor-pointer alert-del"
                     >&times;</strong
@@ -144,7 +148,7 @@ export default function PopupSchedule(props) {
                     >&times;</strong
                     >
                   </div>
-                } */}
+                }
 
                   <button 
                   // type="" 

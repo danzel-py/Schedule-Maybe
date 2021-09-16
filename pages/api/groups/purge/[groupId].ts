@@ -6,24 +6,26 @@ import prisma from '../../../../lib/prisma'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
-  const { groupName } = req.query
+  const { groupId } = req.query
   
   try{
-    if(typeof groupName == "string" ){
+    if(typeof groupId == "string" ){
 
       const group = await prisma.group.findUnique({
         where : {
-          name: groupName
-        },
-        include:{
-          author: true
+          id: parseInt(groupId)
         }
       })
 
-      if(group && group.author.email == session.user.email){
-        const purgeGroup = await prisma.group.delete({
+      if(group && group.authorId == session.id){
+        await prisma.schedule.deleteMany({
+          where:{
+            groupId: group.id
+          }
+        })
+        await prisma.group.delete({
           where: {
-            name: groupName
+            id: group.id
           }
         })
         res.send({
@@ -31,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           success: true
         })
       }else{
-        throw Error("invalid credential")
+        throw Error("an error has occurred")
       }
       
 

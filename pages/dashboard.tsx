@@ -13,22 +13,26 @@ export default function Dashboard() {
   const { isValidating, data, error, mutate } = useSWR(`/api/users/get/schedules`, fetcher)
   const [scheduleList, setScheduleList] = useState([])
 
+
+
+ 
+
   useEffect(() => {
     if (!session && !loading) {
       router.push('/')
     }
   }, [session])
 
-  useEffect(()=>{
-    if(data){
+  useEffect(() => {
+    if (data) {
       let newArr = [...data.user.schedulesAuthored, ...data.user.schedulesEnrolled]
-      sortAscending(newArr, 'startTime')      
+      sortAscending(newArr, 'startTime')
       setScheduleList(newArr)
     }
-  },[data])
+  }, [data])
 
 
-  if(!data || !session || loading || isValidating){
+  if (!data || !session || loading || isValidating) {
     return (<Layout>
       loading...
     </Layout>)
@@ -36,10 +40,10 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <h1>
-        Hi, {data.user.name}
+      <h1 className="text-3xl">
+        Hi, {data.user.name}.
       </h1>
-      <ScheduleBoard schedules={scheduleList} session={session} showcase={true} />
+      <ScheduleBoard mutate={mutate} schedules={scheduleList} session={session} showcase={true} />
 
     </Layout>
   )

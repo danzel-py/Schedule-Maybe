@@ -57,7 +57,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       message: err.message
     })
 
-    res.status(400).end()
 
   }
   
