@@ -7,39 +7,65 @@ import { omit } from '../../../../helpers/object'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
-  const { getUserParam } = req.query  
+  const { getUserParam } = req.query
   let inGroups = getUserParam == "groups"
   let inSchedules = getUserParam == "schedules"
-  if(getUserParam == "all"){
+  if (getUserParam == "all") {
     inGroups = true
     inSchedules = true
   }
 
-  try{
+  try {
     const user = await prisma.user.findUnique({
-      where:{
+      where: {
         email: session.user.email
       },
-      include:{
+      include: {
         accounts: true,
-        ...(inGroups && {groupsAuthored: true, groupsEnrolled: true}),
-        ...(inSchedules && {schedulesEnrolled: true, schedulesAuthored: true})
+        ...(inGroups && { groupsAuthored: true, groupsEnrolled: true }),
+        ...(inSchedules && { schedulesEnrolled: true, schedulesAuthored: true })
       }
     })
 
-    const filteredUser = omit(user,'emailVerified','createdAt','updatedAt','failedAttempts','accounts')
-    if(inGroups){
-      const filteredGroups = user.groupsEnrolled.map(element => {
-        return omit(element, 'enterKey')
+    let otherGroups;
+    if (inGroups) {
+      otherGroups = await prisma.group.findMany({
+        where: {
+          public:true,
+          NOT:
+          {
+            OR:[
+              {
+                users: {
+                  some: {
+                    id: session.id
+                  }
+                }
+              },
+              {
+                authorId: session.id
+              }
+            ]
+          }
+        },
+      })
+    }
+
+    const filteredUser = omit(user, 'emailVerified', 'createdAt', 'updatedAt', 'failedAttempts', 'accounts')
+    if (inGroups) {
+      const filteredGroups = user.groupsEnrolled.map(group => {
+        return omit(group, 'enterKey')
       });
       filteredUser.groupsEnrolled = filteredGroups
     }
     res.send({
-      user: filteredUser
-
+      user: filteredUser,
+      otherGroups: otherGroups.map(group => {
+        return omit(group, 'enterKey')
+      })
     })
-    
-  }catch(err){
+
+  } catch (err) {
     console.log(err)
     res.send({
       message: err.message

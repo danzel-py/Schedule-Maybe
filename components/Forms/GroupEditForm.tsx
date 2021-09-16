@@ -7,8 +7,6 @@ import { IFormCreateGroup } from '../../types/form'
 import { useRouter } from 'next/router'
 import { MessageChannel } from 'worker_threads'
 
-// TODO: form values indifference
-
 export default function GroupEditForm(props) {
   const router = useRouter()
   const [message, setMessage] = useState<string>('')
@@ -40,6 +38,13 @@ export default function GroupEditForm(props) {
   })
 
   async function handleEdit(formData: IFormCreateGroup) {
+    if (
+      props.groupData.name === formData.name 
+    &&props.groupData.enterKey === formData.enterKey
+    &&props.groupData.about === formData.about
+    ){
+      return
+    }
     const res = await fetch(`/api/groups/edit/${props.groupData.id}`, {
       method: 'POST',
       headers: {
@@ -91,7 +96,7 @@ export default function GroupEditForm(props) {
 
 
   return (
-    <div>
+    <div >
       <div className="w-full max-w-md m-auto md:p-2 md:m-0">
         {message &&
 

@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from "react"
 
+// todo: show member count
+
 export default function GroupList(props) {
   const [groupList, setGroupList] = useState<object[]>([])
 
@@ -21,7 +23,7 @@ export default function GroupList(props) {
                     {group.name}
                   </div>
                   <div className='text-sm'>
-                    {group.enterKey ? "ADMIN" : "MEMBER"}
+                    {group.enterKey ? "ADMIN" : props.notEnrolled? "":"MEMBER"}
                   </div>
                 </div>
                 <div className='text-sm'>

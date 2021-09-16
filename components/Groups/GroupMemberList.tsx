@@ -1,9 +1,11 @@
+import { session } from "next-auth/client"
 import { useState } from "react"
 
 // TODO: invite?
+// TODO: show admin
 
 export default function GroupMemberList(props) {
-  const [message,setMessage] = useState<string>('')
+  const [message, setMessage] = useState<string>('')
   const handleKick = async (memberId: number) => {
     const res = await fetch(`/api/groups/kick/${props.groupId}`, {
       method: 'POST',
@@ -18,7 +20,6 @@ export default function GroupMemberList(props) {
       .catch((err) => {
         console.error(err)
       })
-    
   }
 
 
@@ -31,28 +32,51 @@ export default function GroupMemberList(props) {
   }
 
   return (
-    <ul className="divide-y-2">
-      Member list:
-      {
-        props.memberList.map((member, i) => {
-          return (
-            <li key={i}>
-              <div className="flex flex-row justify-between">
-                <div>
-                  {member.name}
-                </div>
-                <button onClick={() => handleKick(member.id)}>
-                  {"kick"}
-                </button>
-              </div>
-              <div>
-                {member.email}
-              </div>
-            </li>
-          )
-        })
+    <div className="">
+      <div className="text-center">
+        Author
+        </div>
+      <div >
+        <div className="flex flex-row justify-between">
+          <div className="text-xl">
+            {props.author.name}
+          </div>
+        </div>
+        <div className="text-sm">
+          {props.author.email}
+        </div>
+      </div>
+      <div>
+      <div className="text-center">
 
-      }
-    </ul>
+      Member
+      </div>
+      <ul className="divide-y-2">
+        {
+          props.memberList.map((member, i) => {
+            return (
+              <li key={i}>
+                <div className="flex flex-row justify-between">
+                  <div className="text-xl">
+                    {member.name}
+                  </div>
+                  {props.session.id === props.author.id &&
+                  <button onClick={() => handleKick(member.id)}>
+                    {"kick"}
+                  </button>
+                  }
+                </div>
+                <div className="text-sm">
+                  {member.email}
+                </div>
+              </li>
+            )
+          })
+
+        }
+      </ul>
+      </div>
+
+    </div>
   )
 }

@@ -82,7 +82,7 @@ export default function GroupPage() {
       <div className='flex flex-col divide-y-2'>
 
         <section className={`flex flex-row justify-between`}>
-          <div className="text-2xl sm:text-4xl">
+          <div onClick={() => { setShowEdit(false) }} className="text-2xl sm:text-4xl">
 
             {data.groupData.name}
           </div>
@@ -92,11 +92,12 @@ export default function GroupPage() {
 
             {data.groupData.admin ?
               <div>
-                <button className="text-red-500 focus:shadow-outline" onClick={handleEditGroup}>Edit group</button>
+                <button className="text-red-500 bg-gray-100" onClick={handleEditGroup}>{showEdit ? "back" : "Edit group"}</button>
             ADMIN
           </div>
               : data.groupData.member ?
                 <div>
+                  <button className="text-red-500 bg-gray-100 " onClick={handleEditGroup}>{showEdit ? "back" : "Group info"}</button>
                   MEMBER
           </div>
                 :
@@ -120,23 +121,38 @@ export default function GroupPage() {
 
 
 
+        <section>
 
-        {(data.groupData.member || data.groupData.admin) && !showEdit &&
+          {(data.groupData.member || data.groupData.admin) && !showEdit &&
+            <div>
+              <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} groupAuthorId={data.groupData.author.id} setShowForm={handleSetShowForm} />
+
+
+              <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                new schedule</button>
+
+            </div>
+          }
+          {showEdit &&
+            <div className="flex flex-col md:flex-row w-full justify-center gap-x-6">
+              {data.groupData.admin &&
+                <div className="w-1/3">
+                  <GroupEditForm groupData={data.groupData} />
+                </div>
+              }
+              <div className="md:w-2/3 w-11/12">
+                <GroupMemberList groupId={data.groupData.id} memberList={data.groupData.memberList} author={data.groupData.author} session={session} />
+              </div>
+            </div>
+          }
+          {!data.groupData.member && !data.groupData.admin && !showEdit &&
           <div>
-            <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} groupAuthorId={data.groupData.author.id} setShowForm={handleSetShowForm} />
-
-
-            <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-              new schedule</button>
-
+            <button onClick={()=>{router.push({pathname: '/g/join', query: {groupName: data.groupData.name}})}}>
+              Click here to join
+            </button>
           </div>
-        }
-        {showEdit &&
-          <div className="md:grid md:grid-cols-2">
-            <GroupEditForm groupData={data.groupData}/>
-            <GroupMemberList groupId = {data.groupData.id} memberList={data.groupData.memberList}/>
-          </div>
-        }
+            }
+        </section>
       </div>
       <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData} />
 

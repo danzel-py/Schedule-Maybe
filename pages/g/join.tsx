@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Link from 'next/link'
 import * as Yup from 'yup'
 import type { IFormJoinGroup } from '../../types/form'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 
 
 /*
@@ -13,9 +13,9 @@ import Router from 'next/router'
 params: name, enterKey
 */
 
-export default function JoinGroup() {
+export default function JoinGroup(props) {
   const [message, setMessage] = useState<string>('')
-
+  const router = useRouter();
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .required('Please specify group name')
@@ -28,7 +28,7 @@ export default function JoinGroup() {
       .max(10, 'Invalid enter key')
   })
 
-  const { register, formState: { errors }, handleSubmit } = useForm<IFormJoinGroup>({
+  const { register, formState: { errors }, handleSubmit, reset } = useForm<IFormJoinGroup>({
     resolver: yupResolver(validationSchema)
   })
 
@@ -52,13 +52,13 @@ export default function JoinGroup() {
       * res.success, res.groupName on success
       * res.message on failure
       */
-    if(res.success){
-      Router.push(`/g/${res.groupName}`)
-   }
-   if(res.message){
+    if (res.success) {
+      router.push(`/g/${res.groupName}`)
+    }
+    if (res.message) {
       console.log(res.message)
       setMessage(res.message)
-   }
+    }
     // redirect to g/something
   }
 
@@ -70,7 +70,12 @@ export default function JoinGroup() {
 
   useEffect(() => {
     scrollToBottom()
-  }, []);
+    if (typeof router.query.groupName === 'string') {
+      reset({
+        name: router.query.groupName
+      })
+    }
+  }, [reset, router.query.groupName]);
 
 
 

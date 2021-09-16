@@ -80,7 +80,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           admin: isAdmin,
           member: group.users.some(checkMember), 
           ...(isAdmin && {enterKey: group.enterKey}),
-          ...(isAdmin && {memberList}),
+          // ...(isAdmin && {memberList}),
+          memberList,
           schedules: group.schedules
         }
       })
