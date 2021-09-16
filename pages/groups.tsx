@@ -16,7 +16,10 @@ export default function groupsPage() {
 
   useEffect(() => {
     if (data) {
-      let newArr = [...data.user.groupsAuthored, ...data.user.groupsEnrolled]
+      let newArr= []
+
+
+        newArr = [...(data.user?.groupsAuthored&&data.user?.groupsAuthored), ...(data.user?.groupsEnrolled && data.user?.groupsEnrolled)]
       sortDescending(newArr, 'updatedAt')
       setGroupList(newArr)
     }

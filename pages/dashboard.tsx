@@ -21,16 +21,14 @@ export default function Dashboard() {
 
   useEffect(()=>{
     if(data){
-      console.log(data)
       let newArr = [...data.user.schedulesAuthored, ...data.user.schedulesEnrolled]
-      sortAscending(newArr, 'startTime')
-      
+      sortAscending(newArr, 'startTime')      
       setScheduleList(newArr)
     }
   },[data])
 
 
-  if(!data){
+  if(!data || !session || loading || isValidating){
     return (<Layout>
       loading...
     </Layout>)

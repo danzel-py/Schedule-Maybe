@@ -18,14 +18,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        email: session.user.email
+        id: session.id
       },
       include: {
         accounts: true,
-        ...(inGroups && { groupsAuthored: true, groupsEnrolled: true }),
+        ...(inGroups && { 
+          groupsAuthored: {
+            include: {
+              users: true
+            }
+          }, 
+          groupsEnrolled: {
+            include: {
+              users: true
+            }
+          }, 
+        }),
         ...(inSchedules && { schedulesEnrolled: true, schedulesAuthored: true })
       }
     })
+    console.log(user);
 
     let otherGroups;
     if (inGroups) {
@@ -48,21 +60,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             ]
           }
         },
+        include:{
+          users:true
+        }
       })
     }
 
     const filteredUser = omit(user, 'emailVerified', 'createdAt', 'updatedAt', 'failedAttempts', 'accounts')
     if (inGroups) {
       const filteredGroups = user.groupsEnrolled.map(group => {
-        return omit(group, 'enterKey')
+        group['count'] = group.users?.length + 1
+        return omit(group, 'enterKey', 'users')
       });
       filteredUser.groupsEnrolled = filteredGroups
+      filteredUser.groupsAuthored = filteredUser.groupsAuthored.map(group=>{
+        group['count'] = group.users?.length + 1
+        return omit(group, 'users')
+      })
     }
+    // console.log(filteredUser);
     res.send({
       user: filteredUser,
-      otherGroups: otherGroups.map(group => {
-        return omit(group, 'enterKey')
-      })
+      ...(inGroups && {otherGroups: otherGroups.map(group => {
+        group['count'] = group.users?.length + 1
+        return omit(group, 'enterKey', 'users')
+      })})
     })
 
   } catch (err) {
