@@ -10,7 +10,7 @@ import * as Yup from 'yup'
  * @param setShowForm
  * @param groupName
  * @param placeholders 
- * @example <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData} />
+ * @example <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={mutate} />
  */
 
 /* 
@@ -23,10 +23,39 @@ placeholders:{
   link: schedule.link,
   type: schedule.type,
   id: schedule.id,
-  edit: true ,
-  portable: true // false if groupIndex
+  &edit: true , // false if create new
+  &portable: true // false if groupIndex
 }
 on portable no groupName
+const [showForm, setShowForm] = useState<boolean>(false)
+const [formPlaceholders, setFormPlaceholders] = useState<object>({edit:false})
+const handleSetShowForm = (edit: boolean = false, placeholders?: Object) => {
+    if (edit) {
+      setShowForm(true)
+      setFormPlaceholders(placeholders)
+    } else {
+      setFormPlaceholders({ edit: false })
+      setShowForm(!showForm)
+    }
+  }
+  useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showForm])
+*/
+
+/*
+Self reminder
+Parent, Child1, Child2
+@example Parent: ScheduleBoard, Child1: ScheduleBoardList
+Parent = [
+  useState:[showForm, formPlaceholder]
+  pass handleSetShowForm as setShowForm to Child1
+]
+Child1 = call setShowForm(true,placeholders)
 */
 export default function ScheduleForm(props) {
   const [message, setMessage] = useState<string>('')

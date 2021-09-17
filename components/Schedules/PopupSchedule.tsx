@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { maxTime, format, isSameDay, parseISO } from 'date-fns'
 import ClickAwayListener from 'react-click-away-listener'
 import { sortAscending } from '../../helpers/sorter'
+import { getDateFromObject, getTimeFromObject } from '../../helpers/datetime'
 
 // todo?: add schedule here maybe
-// todo: on success mutate
 
 export default function PopupSchedule(props) {
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
@@ -12,11 +12,11 @@ export default function PopupSchedule(props) {
   const [message, setMessage] = useState<string>('')
 
 
-  const deleteOrUnenrollSchedule = async (id:Number, unenroll = false) => {
+  const deleteOrUnenrollSchedule = async (id: Number, unenroll = false) => {
     setHandlingRequest(true)
     setMessage('')
     setRequestSuccess(false)
-    const res = await fetch(`/api/schedules/${unenroll? "unenroll":"purge"}`, {
+    const res = await fetch(`/api/schedules/${unenroll ? "unenroll" : "purge"}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -38,10 +38,10 @@ export default function PopupSchedule(props) {
     if (res?.success) {
       setRequestSuccess(true)
       setMessage('')
-      setTimeout(()=>{
+      setTimeout(() => {
         setRequestSuccess(false)
         props.mutate()
-      },1000)
+      }, 1000)
     }
   }
 
@@ -71,12 +71,36 @@ export default function PopupSchedule(props) {
                   <div className="text-xl">
                     {e.name}
                   </div>
-                  <button 
-                  className="text-xs text-gray-400"
-                  onClick={()=>deleteOrUnenrollSchedule(e.id,props.session.id != e.authorId)}
-                  >
-                    {props.session.id == e.authorId ? "delete" : "unenroll"}
-                  </button>
+                  <div className="flex flex-row">
+                    {props.session.id == e.authorId &&
+                      <button className="text-xs text-gray-400"
+                        onClick={() => props.setShowForm(true, {
+                          name: e.name,
+                          description: e.description,
+                          startTime: getTimeFromObject(e.startTime),
+                          endTime: getTimeFromObject(e.endTime),
+                          date: getDateFromObject(e.startTime),
+                          link: e.link,
+                          type: e.type,
+                          id: e.id,
+                          edit: true,
+                          portable: true
+                        })}
+                      >
+                        edit
+                      </button>
+
+                    }
+                    <div className="w-2"></div>
+
+                    <button
+                      className="text-xs text-gray-400"
+                      onClick={() => deleteOrUnenrollSchedule(e.id, props.session.id != e.authorId)}
+                    >
+                      {props.session.id == e.authorId ? "delete" : "unenroll"}
+                    </button>
+                  </div>
+
                 </div>
                 <div className='text-sm'>
                   {e.description}
@@ -127,37 +151,37 @@ export default function PopupSchedule(props) {
                   <button onClick={handleSetCurrentDate} className="font-semibold text-sm text-gray-600">Close</button>
 
                   {(message && !requestSuccess && !handlingRequest) &&
-                  <div className="flex justify-between text-red-50 shadow-inner rounded px-2 bg-red-600">
-                    <p className="self-center text-xs italic">{message}</p><strong onClick={() => setMessage('')} className="text-xl align-center cursor-pointer alert-del"
-                    >&times;</strong
-                    >
-                  </div>
-                }
-                {
-                  requestSuccess &&
-                  <div className="flex justify-between text-green-50 shadow-inner rounded px-2 bg-green-600">
-                    <p className="self-center text-xs italic">"Success!"</p><strong onClick={() => setRequestSuccess(false)} className="text-xl align-center cursor-pointer alert-del"
-                    >&times;</strong
-                    >
-                  </div>
-                }
-                {
-                  handlingRequest &&
-                  <div className="flex justify-between text-blue-50 shadow-inner rounded px-2 bg-blue-600">
-                    <p className="self-center text-xs italic">"Loading..."</p><strong onClick={() => setRequestSuccess(false)} className="text-xl align-center cursor-pointer alert-del"
-                    >&times;</strong
-                    >
-                  </div>
-                }
+                    <div className="flex justify-between text-red-50 shadow-inner rounded px-2 bg-red-600">
+                      <p className="self-center text-xs italic">{message}</p><strong onClick={() => setMessage('')} className="text-xl align-center cursor-pointer alert-del"
+                      >&times;</strong
+                      >
+                    </div>
+                  }
+                  {
+                    requestSuccess &&
+                    <div className="flex justify-between text-green-50 shadow-inner rounded px-2 bg-green-600">
+                      <p className="self-center text-xs italic">"Success!"</p><strong onClick={() => setRequestSuccess(false)} className="text-xl align-center cursor-pointer alert-del"
+                      >&times;</strong
+                      >
+                    </div>
+                  }
+                  {
+                    handlingRequest &&
+                    <div className="flex justify-between text-blue-50 shadow-inner rounded px-2 bg-blue-600">
+                      <p className="self-center text-xs italic">"Loading..."</p><strong onClick={() => setRequestSuccess(false)} className="text-xl align-center cursor-pointer alert-del"
+                      >&times;</strong
+                      >
+                    </div>
+                  }
 
-                  <button 
-                  // type="" 
-                  // form="" 
-                  className="text-sm px-3 py-1 text-white font-semibold bg-blue-500 rounded"
+                  <button
+                    // type="" 
+                    // form="" 
+                    className="text-sm px-3 py-1 text-white font-semibold bg-blue-500 rounded"
                   >
                     idk
 
-                </button>
+                  </button>
                 </div>
 
               </div>

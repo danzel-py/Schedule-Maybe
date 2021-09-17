@@ -7,6 +7,7 @@ import { fetcher } from '../helpers/fetcher'
 import { format, maxTime } from 'date-fns'
 import useSWR from 'swr'
 import PopupSchedule from '../components/Schedules/PopupSchedule'
+import ScheduleForm from '../components/Forms/ScheduleForm'
 
 
 // TODO: add weekly calendar
@@ -18,6 +19,27 @@ export default function Calendar() {
   const [scheduleList, setScheduleList] = useState<object[]>([])
   const [currentDate, setCurrentDate] = useState<Date>(new Date(maxTime))
   const { isValidating, data, error, mutate } = useSWR(`/api/users/get/schedules`, fetcher)
+
+
+  // Form stuffs
+  const [showForm, setShowForm] = useState<boolean>(false)
+  const [formPlaceholders, setFormPlaceholders] = useState<object>({edit:false})
+  const handleSetShowForm = (edit: boolean = false, placeholders?: Object) => {
+    if (edit) {
+      setShowForm(true)
+      setFormPlaceholders(placeholders)
+    } else {
+      setFormPlaceholders({ edit: false })
+      setShowForm(!showForm)
+    }
+  }
+  useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showForm])
 
 
   useEffect(() => {
@@ -51,8 +73,11 @@ export default function Calendar() {
       <MonthlyCalendar scheduleList={scheduleList} setCurrentDate = {handleSetCurrentDate}/>
       {/* {format(currentDate,"d y")} */}
 
-      <PopupSchedule mutate={mutate} scheduleList={scheduleList} session={session} currentDate={currentDate} setCurrentDate={handleSetCurrentDate}/>
-
+      <PopupSchedule mutate={mutate} scheduleList={scheduleList} session={session} currentDate={currentDate} setCurrentDate={handleSetCurrentDate} setShowForm={handleSetShowForm}/>
+      <ScheduleForm
+        showForm={showForm} setShowForm={handleSetShowForm} placeholders={formPlaceholders}
+        getRefresh={mutate}
+      />
     </Layout>
   )
 }
