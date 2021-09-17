@@ -73,6 +73,11 @@ export default function GroupPage() {
     }
   }, [session])
 
+  useEffect(()=>{
+    if(!isValidating){
+      setRequestSuccess(false);
+    }
+  },[isValidating])
 
   if (error) return <div>{error}</div>
   if (!data) return <Layout>loading...</Layout>

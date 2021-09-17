@@ -48,6 +48,13 @@ export default function IndexPage() {
         }
         </div>
       </div>
+      <div>
+        Need:
+        <ul>
+          <li>Feedback</li>
+          <li>UI UX ers</li>
+        </ul>
+      </div>
     </Layout>
   )
 }

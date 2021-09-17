@@ -8,13 +8,13 @@ TODO:
 - Groups:
   - ~~model~~, ~~crud~~, public/private group?
   - ~~kick~~
-  - invitation
+  - invitation?
 - Schedule:
-  - ~~model~~, ~~cr~~ud
+  - ~~model~~, ~~crud~~
   - individual schedule?
 - build pages:
   - groups
-    - ~~enrolled groups~~ + some public groups
+    - ~~enrolled groups~~ + ~~some public groups~~
   - ~~each group~~
     - ~~crud schedule here~~
     - ~~edit~~
@@ -23,14 +23,15 @@ TODO:
     - weekly
     - daily
   - dashboard
-    - daily overview
-    - upcoming queue
+    - ~~daily overview~~
+    - ~~upcoming queue~~
 - Layout & Styling
 - TBA
 
 
 Ideas:
-- assignment deadline system 
+- assignment deadline system
+- schedule tags 
 
 Future stuff:
 - language

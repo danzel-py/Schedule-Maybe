@@ -7,6 +7,8 @@ import { IFormCreateGroup } from '../../types/form'
 import { useRouter } from 'next/router'
 import {format,parseISO} from 'date-fns'
 
+// TODO: make private, make strict
+
 export default function GroupEditForm(props) {
   const router = useRouter()
   const [message, setMessage] = useState<string>('')
