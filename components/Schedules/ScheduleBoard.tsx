@@ -10,6 +10,7 @@ import {
   addDays,
   parseISO
 } from 'date-fns'
+import ScheduleBoardList from "./ScheduleBoardList"
 
 // todo: handle delete/unenroll schedule
 
@@ -17,6 +18,18 @@ export default function ScheduleList(props) {
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
   const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
+
+  const handlingRequestHandler = (param: boolean) => {
+    setHandlingRequest(param)
+  }
+  const requestSuccessHandler = (param: boolean) => {
+    setRequestSuccess(param)
+  }
+
+  const messageHandler = (param: string) => {
+    setMessage(param)
+  }
+
   const [propsData, setPropsData] = useState(props)
   const [todaySchedule, setTodaySchedule] = useState([])
   const [weekSchedule, setWeekSchedule] = useState([])
@@ -153,9 +166,9 @@ export default function ScheduleList(props) {
     if (res?.success) {
       setRequestSuccess(true)
       setMessage('')
-      setTimeout(()=>{
+      setTimeout(() => {
         props.mutate();
-      },1000)
+      }, 1000)
     }
 
   }
@@ -186,9 +199,9 @@ export default function ScheduleList(props) {
     if (res?.success) {
       setRequestSuccess(true)
       setMessage('')
-      setTimeout(()=>{
+      setTimeout(() => {
         props.mutate();
-      },1000)
+      }, 1000)
     }
 
   }
@@ -227,72 +240,10 @@ export default function ScheduleList(props) {
 
 
         <main role="main" className="w-full sm:w-2/3 md:w-3/4 pt-1 px-2">
-        {requestSuccess && "Success."}
-                        {message && message}
-          <ul className='flex flex-col '>
-            {
-              board.map((e, i) => {
-                if (format(parseISO(e.startTime), "eee d MMM yy") != currentRender) {
-                  currentRender = format(parseISO(e.startTime), "eee d MMM yy")
-                  shouldSayDate = true
-                  colorSwitch = !colorSwitch
-                } else {
-                  shouldSayDate = false
-                }
-                return (
-                  <li key={i}
-                    className={`${colorSwitch ? "bg-gray-100 " : ""} p-2`}
-                  >
-                    {shouldSayDate &&
-                      <div
-                        className="mb-2 text-center"
-                      >
-                        {format(parseISO(e.startTime), "eee d MMM yy")}
-                      </div>
-                    }
-                    <div
-                    >
-                      <div className="flex flex-row justify-between">
-                        <div className='text-lg'>
-                          {format(parseISO(e.startTime), "kk:mm")}
-                          {"-"}
-                          {format(parseISO(e.endTime), "kk:mm")}
-                        </div>
-                        <div className="text-sm">
-                          {e.type}
-                        </div>
-                      </div>
-                      <div className="flex flex-row ml-2 justify-between">
-                        <div className="text-xl">
-                          {e.name}
-                        </div>
-                        {props.session.id == e.authorId ?
-                          <button className="text-xs text-gray-400" onClick={()=>handleDeleteSchedule(e.id)}>
-                            delete
-                          </button>
-                          :
-                          <button className="text-xs text-gray-400" onClick={()=>handleUnenrollSchedule(e.id)}>
-                            unenroll
-                          </button>
-                        }
-                      </div>
-                      <div className='text-sm ml-2'>
-                        {e.description}
-                        {e.link &&
-                          <a href={e.link} target="_blank">
-                            <p className='w-full truncate text-blue-500 mt-2'>
-                              {e.link}
-                            </p>
-                          </a>
-                        }
-                        
-                      </div>
-                    </div>
-                  </li>
-                )
-              })
-            }
-          </ul>
+          {requestSuccess && "Success."}
+          {message && message}
+          <ScheduleBoardList board={board} session={props.session} mutate={props.mutate} setHandlingRequest={handlingRequestHandler} setMessage={messageHandler} setRequestSuccess={requestSuccessHandler} />
+
         </main>
       </div>
     </div >
