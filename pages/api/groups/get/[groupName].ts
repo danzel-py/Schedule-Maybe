@@ -29,7 +29,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           author: true,
           schedules: {
             include:{
-              author : true
+              author : {
+                select:{
+                  id:true,
+                  name:true,
+                  email:true
+                }
+              },
+              users:{
+                select:{
+                  id:true
+                }
+              }
             }
           },
           users: {

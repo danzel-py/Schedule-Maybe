@@ -352,6 +352,7 @@ export default function ScheduleForm(props) {
                         name="allParticipate"
                         id="allParticipate"
                         type="checkbox"
+                        defaultChecked={true}
                         {...register('includeEveryone')}
                         className="rounded bg-gray-200 border-transparent focus:border-transparent focus:bg-gray-200 text-gray-700 focus:ring-1 focus:ring-offset-2 focus:ring-gray-500"
                       />

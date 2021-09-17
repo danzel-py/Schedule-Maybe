@@ -7,19 +7,35 @@ import ScheduleForm from '../../../components/Forms/ScheduleForm'
 import GroupEditForm from '../../../components/Forms/GroupEditForm'
 import GroupMemberList from '../../../components/Groups/GroupMemberList'
 import { useSession } from "next-auth/client"
-import ScheduleList from '../../../components/Schedules/ScheduleList'
+// import ScheduleList from '../../../components/Schedules/ScheduleList'
 import { fetcher } from '../../../helpers/fetcher'
+import ScheduleBoardList from '../../../components/Schedules/ScheduleBoardList'
 
 export default function GroupPage() {
   const [session, loading] = useSession()
   const router = useRouter()
   const { groupName } = router.query
   const { isValidating, data, error, mutate } = useSWR(`/api/groups/get/${groupName}`, fetcher)
-  const [showForm, setShowForm] = useState<boolean>(false)
   const [showEdit, setShowEdit] = useState<boolean>(false)
-  const [formPlaceholders, setFormPlaceholders] = useState<object>({ edit: false })
+  const [message, setMessage] = useState<string>('')
+  const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
+  const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
+
+  const handleRequestSuccess = (a: boolean) => {
+    setRequestSuccess(a)
+  }
+  const handleMessage = (a: string) => {
+    setMessage(a)
+  }
+  const handleHandlingRequest = (a: boolean) => {
+    setHandlingRequest(a)
+  }
+
+
 
   // FORM Stuffs
+  const [showForm, setShowForm] = useState<boolean>(false)
+  const [formPlaceholders, setFormPlaceholders] = useState<object>({ edit: false })
   const handleSetShowForm = (edit: boolean = false, placeholders?: Object) => {
     if (edit) {
       setShowForm(true)
@@ -39,7 +55,6 @@ export default function GroupPage() {
 
 
   const handleEditGroup = () => {
-    // router.push({ pathname: '/g/edit', query: { groupName } })
     if (showEdit) {
       setShowEdit(false)
     } else {
@@ -125,14 +140,45 @@ export default function GroupPage() {
 
 
         <section>
-
           {(data.groupData.member || data.groupData.admin) && !showEdit &&
-            <div>
-              <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} groupAuthorId={data.groupData.author.id} setShowForm={handleSetShowForm} />
+            <div className="flex sm:flex-row flex-col justify-around">
+
+              <aside className="flex flex-col">
+                <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                  new schedule
+              </button>
+                {message &&
+                  <div>
+                    {message}
+                  </div>
+                }
+                {requestSuccess&&
+                  <div>
+                    Success!
+                  </div>
+                }
+                {handlingRequest&&
+                <div>
+                  Handling request.. please wait
+                </div>
+
+                }
 
 
-              <button onClick={() => setShowForm(!showForm)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-                new schedule</button>
+
+              </aside>
+
+
+
+              <div className="sm:w-1/2 w-11/12">
+
+                <ScheduleBoardList setShowForm={handleSetShowForm} board={data.groupData.schedules} session={session} mutate={mutate}
+                  setHandlingRequest={handleHandlingRequest}
+                  setMessage={handleMessage}
+                  setRequestSuccess={handleRequestSuccess}
+                />
+              </div>
+
 
             </div>
           }

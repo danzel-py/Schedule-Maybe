@@ -12,19 +12,26 @@ import { getDateFromObject, getTimeFromObject } from "../../helpers/datetime"
  * @param setMessage
  * @param setRequestSuccess
  * @param setShowForm
- * @returns unordered list
- * @example <ScheduleBoardList board={board} session={props.session} mutate={props.mutate} setHandlingRequest={handlingRequestHandler} setMessage={messageHandler} setRequestSuccess={requestSuccessHandler} />
+ * @returns an ul with lis
+ * @example <ScheduleBoardList 
+ * setShowForm={handleSetShowForm} (important) (see ScheduleBoard)
+ * board={board} 
+ * session={props.session}
+ * mutate={props.mutate}
+ * setHandlingRequest={handlingRequestHandler} 
+ * setMessage={messageHandler} 
+ * setRequestSuccess={requestSuccessHandler} />
  */
 export default function ScheduleBoardList(props) {
   let currentRender = ''
   let shouldSayDate = true
   let colorSwitch = true
 
-  const handleUnenrollSchedule = async (id) => {
+  const handleUnenrollSchedule = async (id, enroll=false) => {
     props.setHandlingRequest(true)
     props.setMessage('')
     props.setRequestSuccess(false)
-    const res = await fetch(`/api/schedules/unenroll`, {
+    const res = await fetch(`/api/schedules/${enroll? "enroll":"unenroll"}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -49,6 +56,9 @@ export default function ScheduleBoardList(props) {
       setTimeout(() => {
         props.mutate();
       }, 1000)
+      setTimeout(() => {
+        props.setRequestSuccess(false)
+      }, 2000)
     }
 
   }
@@ -146,10 +156,16 @@ export default function ScheduleBoardList(props) {
                         delete
                       </button>
                     </div>
-                    :
-                    <button className="text-xs text-gray-400" onClick={() => handleUnenrollSchedule(e.id)}>
+                    :e.users?.find((user)=>user.id == props.session.id)?
+                      <button className="text-xs text-gray-400" onClick={() => handleUnenrollSchedule(e.id)}>
                       unenroll
-                          </button>
+                      </button>
+                      :
+                      <button className="text-xs text-gray-400" onClick={() => handleUnenrollSchedule(e.id, true)}>
+                      enroll
+                      </button>
+                      
+                    
                   }
                 </div>
                 <div className='text-sm ml-2'>

@@ -2,7 +2,7 @@ import { getSession } from "next-auth/client"
 import type { NextApiResponse, NextApiRequest } from 'next'
 import prisma from '../../../lib/prisma'
 
-// ! unenroll SCHEDULE BY ID
+// ! enroll SCHEDULE BY ID
 /*
   * on success send success
   * send message
@@ -25,7 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if(targetSchedule.authorId == session.id){
-      throw Error("u're an author, can't unenroll")
+      throw Error("u're an author, can't enroll")
     }
 
     await prisma.schedule.update({
@@ -34,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data:{
         users:{
-          disconnect:[
+          connect:[
             {id: session.id}
           ]
         }
@@ -45,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
 
     res.send({
-      message: "unenroll success",
+      message: "enroll success",
       success: true
     })
 
