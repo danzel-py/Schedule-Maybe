@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react"
 import { getDateFromObject, getTimeFromObject } from "../../helpers/datetime"
+import {parseISO, format }from 'date-fns'
+import ScheduleBoardList from "./ScheduleBoardList"
 
+// group page
+/**
+ * 
+ * @param schedules
+ * @param session
+ * @param groupName
+ * @param groupAuthorId
+ * @param setShowForm
+ * @example <ScheduleList schedules={data.groupData.schedules} session={session} groupName={groupName} groupAuthorId={data.groupData.author.id} setShowForm={handleSetShowForm} />
+ 
+ */
 export default function ScheduleList(props) {
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
   const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
@@ -49,14 +62,18 @@ export default function ScheduleList(props) {
         <ul>
           {propsData.schedules.map((schedule) => {
             return (
-              <li key={schedule.id}>
+              <li key={schedule.id} className="flex flex-col">
+                <div>
+
                 {schedule.name}
-                {" | "}
+                </div>
                 {schedule.description}
                 {" | "}
-                {schedule.startTime}
+                {format(parseISO(schedule.startTime), "eee d MMM yy")}
                 {" | "}
-                {schedule.endTime}
+                {format(parseISO(schedule.startTime), "hh:mm")}
+                {" | "}
+                {format(parseISO(schedule.endTime), "hh:mm")}
                 {(!propsData.showcase &&
                   (
                     propsData.session.id == schedule.authorId
@@ -66,7 +83,7 @@ export default function ScheduleList(props) {
                   <div>
                     <button onClick={() => handleDeleteSchedule(schedule.id)}>
                       DELete
-              </button>
+                    </button>
                     {" | "}
                     <button onClick={() => propsData.setShowForm(true, {
                       name: schedule.name,
@@ -79,7 +96,8 @@ export default function ScheduleList(props) {
                       id: schedule.id,
                       edit: true
                     })} >
-                      edit</button>
+                      edit
+                    </button>
                   </div>
                 }
               </li>

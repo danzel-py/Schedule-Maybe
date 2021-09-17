@@ -19,6 +19,7 @@ export default function GroupPage() {
   const [showEdit, setShowEdit] = useState<boolean>(false)
   const [formPlaceholders, setFormPlaceholders] = useState<object>({ edit: false })
 
+  // FORM Stuffs
   const handleSetShowForm = (edit: boolean = false, placeholders?: Object) => {
     if (edit) {
       setShowForm(true)
@@ -28,6 +29,15 @@ export default function GroupPage() {
       setShowForm(!showForm)
     }
   }
+  useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showForm])
+
+
   const handleEditGroup = () => {
     // router.push({ pathname: '/g/edit', query: { groupName } })
     if (showEdit) {
@@ -48,13 +58,6 @@ export default function GroupPage() {
     }
   }, [session])
 
-  useEffect(() => {
-    if (showForm) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-  }, [showForm])
 
   if (error) return <div>{error}</div>
   if (!data) return <Layout>loading...</Layout>
@@ -93,13 +96,13 @@ export default function GroupPage() {
             {data.groupData.admin ?
               <div>
                 <button className="text-red-500 bg-gray-100" onClick={handleEditGroup}>{showEdit ? "back" : "Edit group"}</button>
-            ADMIN
-          </div>
+                  ADMIN
+                </div>
               : data.groupData.member ?
                 <div>
                   <button className="text-red-500 bg-gray-100 " onClick={handleEditGroup}>{showEdit ? "back" : "Group info"}</button>
                   MEMBER
-          </div>
+                </div>
                 :
                 <div>
                 </div>
@@ -146,12 +149,12 @@ export default function GroupPage() {
             </div>
           }
           {!data.groupData.member && !data.groupData.admin && !showEdit &&
-          <div>
-            <button onClick={()=>{router.push({pathname: '/g/join', query: {groupName: data.groupData.name}})}}>
-              Click here to join
+            <div>
+              <button onClick={() => { router.push({ pathname: '/g/join', query: { groupName: data.groupData.name } }) }}>
+                Click here to join
             </button>
-          </div>
-            }
+            </div>
+          }
         </section>
       </div>
       <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData} />

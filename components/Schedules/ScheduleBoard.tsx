@@ -11,6 +11,8 @@ import {
   parseISO
 } from 'date-fns'
 import ScheduleBoardList from "./ScheduleBoardList"
+import ScheduleForm from '../../components/Forms/ScheduleForm'
+
 
 // todo: handle delete/unenroll schedule
 
@@ -18,6 +20,8 @@ export default function ScheduleList(props) {
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
   const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
+  const [showForm, setShowForm] = useState<boolean>(false)
+  const [formPlaceholders, setFormPlaceholders] = useState<object>({edit:false})
 
   const handlingRequestHandler = (param: boolean) => {
     setHandlingRequest(param)
@@ -30,6 +34,24 @@ export default function ScheduleList(props) {
     setMessage(param)
   }
 
+  // FORM Stuffs
+  const handleSetShowForm = (edit: boolean = false, placeholders?: Object) => {
+    if (edit) {
+      setShowForm(true)
+      setFormPlaceholders(placeholders)
+    } else {
+      setFormPlaceholders({ edit: false })
+      setShowForm(!showForm)
+    }
+  }
+  useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showForm])
+
   const [propsData, setPropsData] = useState(props)
   const [todaySchedule, setTodaySchedule] = useState([])
   const [weekSchedule, setWeekSchedule] = useState([])
@@ -38,9 +60,6 @@ export default function ScheduleList(props) {
   const [futureSchedule, setFutureSchedule] = useState([])
   const [board, setBoard] = useState([])
   const [boardNum, setBoardNum] = useState(0)
-  let currentRender = ''
-  let shouldSayDate = true
-  let colorSwitch = true
 
   const asideData = [
     {
@@ -103,6 +122,7 @@ export default function ScheduleList(props) {
     setPastSchedule(past)
     setFutureSchedule(future)
     setBoard(today)
+    setBoardNum(0)
   }, [propsData.schedules])
 
   useEffect(() => {
@@ -139,71 +159,6 @@ export default function ScheduleList(props) {
     else {
       return 0;
     }
-  }
-  const handleUnenrollSchedule = async (id) => {
-    setHandlingRequest(true)
-    setMessage('')
-    setRequestSuccess(false)
-    const res = await fetch(`/api/schedules/unenroll`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        id
-      })
-    })
-      .then(r => r.json())
-      .catch((err) => {
-        console.error(err)
-      })
-      .finally(() => {
-        setHandlingRequest(false)
-      })
-    if (res?.message) {
-      setMessage(res.message)
-    }
-    if (res?.success) {
-      setRequestSuccess(true)
-      setMessage('')
-      setTimeout(() => {
-        props.mutate();
-      }, 1000)
-    }
-
-  }
-
-  const handleDeleteSchedule = async (id) => {
-    setHandlingRequest(true)
-    setMessage('')
-    setRequestSuccess(false)
-    const res = await fetch(`/api/schedules/purge`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        id
-      })
-    })
-      .then(r => r.json())
-      .catch((err) => {
-        console.error(err)
-      })
-      .finally(() => {
-        setHandlingRequest(false)
-      })
-    if (res?.message) {
-      setMessage(res.message)
-    }
-    if (res?.success) {
-      setRequestSuccess(true)
-      setMessage('')
-      setTimeout(() => {
-        props.mutate();
-      }, 1000)
-    }
-
   }
 
 
@@ -242,10 +197,19 @@ export default function ScheduleList(props) {
         <main role="main" className="w-full sm:w-2/3 md:w-3/4 pt-1 px-2">
           {requestSuccess && "Success."}
           {message && message}
-          <ScheduleBoardList board={board} session={props.session} mutate={props.mutate} setHandlingRequest={handlingRequestHandler} setMessage={messageHandler} setRequestSuccess={requestSuccessHandler} />
+          <ScheduleBoardList 
+          board={board} 
+          session={props.session} 
+          mutate={props.mutate} 
+          setHandlingRequest={handlingRequestHandler} 
+          setMessage={messageHandler} 
+          setRequestSuccess={requestSuccessHandler}
+          setShowForm={handleSetShowForm}
+           />
 
         </main>
       </div>
+      <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={false} placeholders={formPlaceholders} getRefresh={props.mutate} />
     </div >
   )
 }

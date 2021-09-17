@@ -8,7 +8,9 @@ import { format, maxTime } from 'date-fns'
 import useSWR from 'swr'
 import PopupSchedule from '../components/Schedules/PopupSchedule'
 
-// todo: in schedule list button : create schedule => choose group => show form with prepopulated date
+
+// TODO: add weekly calendar
+// todo: in schedule list button : create schedule => choose group => show form with prepopulated date (monthly,weekly)
 
 export default function Calendar() {
   const router = useRouter()

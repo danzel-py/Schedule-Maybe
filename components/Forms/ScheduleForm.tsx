@@ -5,6 +5,29 @@ import ClickAwayListener from 'react-click-away-listener'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 
+/**
+ * @param showForm
+ * @param setShowForm
+ * @param groupName
+ * @param placeholders 
+ * @example <ScheduleForm showForm={showForm} setShowForm={handleSetShowForm} groupName={groupName} placeholders={formPlaceholders} getRefresh={handleRefreshData} />
+ */
+
+/* 
+placeholders:{
+  name: schedule.name,
+  description: schedule.description,
+  startTime: getTimeFromObject(schedule.startTime),
+  endTime: getTimeFromObject(schedule.endTime),
+  date: getDateFromObject(schedule.startTime),
+  link: schedule.link,
+  type: schedule.type,
+  id: schedule.id,
+  edit: true ,
+  portable: true // false if groupIndex
+}
+on portable no groupName
+*/
 export default function ScheduleForm(props) {
   const [message, setMessage] = useState<string>('')
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false)
@@ -117,7 +140,13 @@ export default function ScheduleForm(props) {
       }
     }
     setHandlingRequest(true)
-    const res = await fetch(`/api/schedules/${edit ? "edit" : "create"}/${propsData.groupName}`, {
+    const res = await fetch(
+      `${placeholders.portable ?
+        `/api/schedules/portable/edit`
+        :
+        `/api/schedules/${edit ? "edit" : "create"}/${propsData.groupName}`
+      }`, {
+
       method: 'POST',
       headers: {
         'Content-type': 'application/json'

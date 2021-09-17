@@ -1,5 +1,20 @@
-import {format, parseISO} from 'date-fns'
+import { format, parseISO } from 'date-fns'
+import { getDateFromObject, getTimeFromObject } from "../../helpers/datetime"
 
+
+
+/**
+ * Schedule List for the board in dashboard
+ * @param {object[]} board - list of schedules
+ * @param session
+ * @param mutate
+ * @param setHandlingRequest
+ * @param setMessage
+ * @param setRequestSuccess
+ * @param setShowForm
+ * @returns unordered list
+ * @example <ScheduleBoardList board={board} session={props.session} mutate={props.mutate} setHandlingRequest={handlingRequestHandler} setMessage={messageHandler} setRequestSuccess={requestSuccessHandler} />
+ */
 export default function ScheduleBoardList(props) {
   let currentRender = ''
   let shouldSayDate = true
@@ -31,9 +46,9 @@ export default function ScheduleBoardList(props) {
     if (res?.success) {
       props.setRequestSuccess(true)
       props.setMessage('')
-      setTimeout(()=>{
+      setTimeout(() => {
         props.mutate();
-      },1000)
+      }, 1000)
     }
 
   }
@@ -64,9 +79,9 @@ export default function ScheduleBoardList(props) {
     if (res?.success) {
       props.setRequestSuccess(true)
       props.setMessage('')
-      setTimeout(()=>{
+      setTimeout(() => {
         props.mutate();
-      },1000)
+      }, 1000)
     }
 
   }
@@ -82,7 +97,7 @@ export default function ScheduleBoardList(props) {
             shouldSayDate = false
           }
           return (
-            <li key={i}
+            <li key={e.id}
               className={`${colorSwitch ? "bg-gray-100 " : ""} p-2`}
             >
               {shouldSayDate &&
@@ -109,9 +124,28 @@ export default function ScheduleBoardList(props) {
                     {e.name}
                   </div>
                   {props.session.id == e.authorId ?
-                    <button className="text-xs text-gray-400" onClick={() => handleDeleteSchedule(e.id)}>
-                      delete
-                          </button>
+                    <div className="flex flex-row">
+                      <button className="text-xs text-gray-400" 
+                      onClick={() => props.setShowForm(true, {
+                        name: e.name,
+                        description: e.description,
+                        startTime: getTimeFromObject(e.startTime),
+                        endTime: getTimeFromObject(e.endTime),
+                        date: getDateFromObject(e.startTime),
+                        link: e.link,
+                        type: e.type,
+                        id: e.id,
+                        edit: true,
+                        portable: true
+                      })}
+                      >
+                        edit
+                      </button>
+                      <div className="w-2"></div>
+                      <button className="text-xs text-gray-400" onClick={() => handleDeleteSchedule(e.id)}>
+                        delete
+                      </button>
+                    </div>
                     :
                     <button className="text-xs text-gray-400" onClick={() => handleUnenrollSchedule(e.id)}>
                       unenroll
