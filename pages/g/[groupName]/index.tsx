@@ -67,6 +67,33 @@ export default function GroupPage() {
   }
 
 
+  // leave group
+  const handleLeave = async () => {
+    setMessage("please wait");
+    const res = await fetch(`/api/groups/kick/${data.groupData.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        memberId: session.id
+      })
+    })
+      .then(r => r.json())
+      .then(()=>{
+        setMessage('')
+        router.push("/groups")
+      })
+      .catch((err) => {
+        console.error(err)
+        setMessage(
+          err
+        )
+      })
+  }
+
+
+
   useEffect(() => {
     if (!session && !loading) {
       router.push('/')
@@ -168,13 +195,7 @@ export default function GroupPage() {
                 </div>
 
                 }
-
-
-
               </aside>
-
-
-
               <div className="sm:w-1/2 w-11/12">
 
                 <ScheduleBoardList setShowForm={handleSetShowForm} board={data.groupData.schedules} session={session} mutate={mutate}
@@ -189,10 +210,23 @@ export default function GroupPage() {
           }
           {showEdit &&
             <div className="flex flex-col md:flex-row w-full justify-center gap-x-6">
+              {/* ADMIN FORM */}
               {data.groupData.admin &&
                 <div className="w-1/3">
                   <GroupEditForm groupData={data.groupData} />
                 </div>
+              }
+              {/* MEMBER */}
+              {data.groupData.member && 
+                <div>
+                  <button 
+                  className="text-red-500 bg-red-100 text-sm"
+                  onClick={handleLeave}
+                  >
+                  leave group
+                  </button>
+                  {message}
+                  </div>
               }
               <div className="md:w-2/3 w-11/12">
                 <GroupMemberList groupId={data.groupData.id} memberList={data.groupData.memberList} author={data.groupData.author} session={session} />

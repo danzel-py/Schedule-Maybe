@@ -10,7 +10,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
   const {memberId } = req.body
   const { groupId } = req.query
-  console.log(req)
   
 
   try{
@@ -18,12 +17,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const groupGet = await prisma.group.findUnique({
         where:{
           id: parseInt(groupId)
-        }
+        },include:{schedules:true}
       })
       
       if(!groupGet || session.id != groupGet.authorId){
-        throw Error("invalid credentials")
+        // not author but kick self
+        if(session.id == memberId){
+          // ok
+        }else{
+          throw Error("invalid credentials")
+        }
       }
+
+      const unenrollSchedules = await prisma.user.update({
+        where:{
+          id: memberId
+        },
+        data:{
+          schedulesEnrolled:{
+            disconnect: groupGet.schedules.map((sch)=>{
+              return {id: sch.id}
+            })
+          }
+        }
+      })
 
       const groupUpdate = await prisma.group.update({
         where:{
@@ -47,7 +64,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
     
   }catch(err){
-    console.log(err.code, "CODE")
+    console.log(err)
     res.send({
       message: err.message,
     })
